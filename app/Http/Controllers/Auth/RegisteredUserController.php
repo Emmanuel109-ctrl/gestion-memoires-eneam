@@ -26,20 +26,38 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
+     * L'inscription publique crée toujours un compte étudiant : les comptes
+     * administrateur et bibliothécaire sont créés par les seeders (ou plus tard
+     * par l'administration). Le matricule est l'identifiant de connexion.
+     *
      * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
+        $request->merge([
+            'matricule' => mb_strtoupper(trim((string) $request->input('matricule'))),
+        ]);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'matricule' => [
+                'required',
+                'string',
+                'min:4',
+                'max:20',
+                'regex:/^[A-Z0-9\-\/]+$/',
+                'unique:'.User::class.',matricule',
+            ],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'matricule' => $request->matricule,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'etudiant',
         ]);
 
         event(new Registered($user));

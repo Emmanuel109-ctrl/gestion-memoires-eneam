@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -24,7 +25,6 @@ return new class extends Migration
             $table->date('date_embargo')->nullable();
             $table->foreignId('etudiant_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('auteur_nom')->nullable();
-            $table->string('encadreur_nom')->nullable();
             $table->string('type_diplome')->nullable();
             $table->date('date_soutenance')->nullable();
             $table->string('cote')->nullable();
@@ -32,9 +32,16 @@ return new class extends Migration
             $table->foreignId('annee_id')->constrained('annees_academiques')->restrictOnDelete();
             $table->boolean('admin_depose')->default(false);
             $table->integer('vues')->default(0);
+            $table->timestamp('date_depot')->useCurrent();
             $table->timestamps();
 
-            $table->fullText(['titre', 'resume', 'mots_cles']);
+            $table->index('statut');
+            $table->index('date_depot');
+
+            // FULLTEXT n'est supporté que par MySQL / MariaDB (pas SQLite).
+            if (in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+                $table->fullText(['titre', 'resume', 'mots_cles']);
+            }
         });
     }
 

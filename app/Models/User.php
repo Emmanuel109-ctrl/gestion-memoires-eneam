@@ -74,4 +74,17 @@ class User extends Authenticatable
     {
         return $this->role === 'etudiant';
     }
+
+    /**
+     * Libellé du rôle pour l'affichage.
+     */
+    public function libelleRole(): string
+    {
+        return match ($this->role) {
+            'admin'          => 'Administrateur',
+            'bibliothecaire' => 'Bibliothécaire',
+            'etudiant'       => 'Étudiant',
+            default          => 'Utilisateur',
+        };
+    }
 }

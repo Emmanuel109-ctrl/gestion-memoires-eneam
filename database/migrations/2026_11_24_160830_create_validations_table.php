@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('validations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('memoire_id')->constrained('memoires')->cascadeOnDelete();
-            $table->foreignId('validateur_id')->constrained('users')->nullOnDelete();
-            $table->enum('statut', ['en_cours', 'valide', 'rejete'])->default('en_cours');
+            $table->foreignId('validateur_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->enum('statut', ['en_verification', 'valide', 'rejete'])->default('en_verification');
             $table->text('motif')->nullable();
             $table->timestamp('date_validation')->useCurrent();
             $table->timestamps();

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,10 +17,11 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register(): void
+    public function test_new_students_can_register_with_their_matricule(): void
     {
         $response = $this->post('/register', [
-            'name' => 'Test User',
+            'name' => 'Test Étudiant',
+            'matricule' => 'ETU-2024-999',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -27,5 +29,34 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'test@example.com',
+            'matricule' => 'ETU-2024-999',
+            'role' => 'etudiant',
+        ]);
+    }
+
+    public function test_matricule_is_required(): void
+    {
+        $this->post('/register', [
+            'name' => 'Sans Matricule',
+            'email' => 'sans@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertSessionHasErrors('matricule');
+    }
+
+    public function test_matricule_must_be_unique(): void
+    {
+        User::factory()->create(['matricule' => 'ETU-2024-001']);
+
+        $this->post('/register', [
+            'name' => 'Doublon',
+            'matricule' => 'ETU-2024-001',
+            'email' => 'doublon@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertSessionHasErrors('matricule');
     }
 }

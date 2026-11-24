@@ -2,16 +2,25 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AnneeAcademique;
 use Illuminate\Database\Seeder;
 
 class AnneeAcademiqueSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        $annees = [
+            ['libelle' => '2023-2024', 'date_debut' => '2023-10-01', 'date_fin' => '2024-07-31', 'active' => false],
+            ['libelle' => '2024-2025', 'date_debut' => '2024-10-01', 'date_fin' => '2025-07-31', 'active' => false],
+            ['libelle' => '2025-2026', 'date_debut' => '2025-10-01', 'date_fin' => '2026-07-31', 'active' => false],
+            ['libelle' => '2026-2027', 'date_debut' => '2026-10-01', 'date_fin' => '2027-07-31', 'active' => true],
+        ];
+
+        foreach ($annees as $annee) {
+            AnneeAcademique::updateOrCreate(
+                ['libelle' => $annee['libelle']],
+                $annee
+            );
+        }
     }
 }

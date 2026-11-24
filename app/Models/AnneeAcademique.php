@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AnneeAcademique extends Model
 {
+    protected $table = 'annees_academiques';
+
     protected $fillable = [
         'libelle',
         'date_debut',

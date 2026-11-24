@@ -20,7 +20,6 @@ class Memoire extends Model
         'date_embargo',
         'etudiant_id',
         'auteur_nom',
-        'encadreur_nom',
         'type_diplome',
         'date_soutenance',
         'cote',
@@ -28,11 +27,13 @@ class Memoire extends Model
         'annee_id',
         'admin_depose',
         'vues',
+        'date_depot',
     ];
 
     protected $casts = [
         'date_embargo' => 'date',
         'date_soutenance' => 'date',
+        'date_depot' => 'datetime',
         'admin_depose' => 'boolean',
         'telechargement_autorise' => 'boolean',
         'vues' => 'integer',
