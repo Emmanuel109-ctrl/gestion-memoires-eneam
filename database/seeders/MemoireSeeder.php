@@ -110,6 +110,23 @@ class MemoireSeeder extends Seeder
                 'vues' => 76,
                 'date_depot' => '2026-06-01 11:00:00',
             ],
+            [
+                'titre' => 'Mise en place d\'un tableau de bord de suivi des stocks pharmaceutiques',
+                'resume' => 'Conception d\'un outil de pilotage des entrées, sorties et seuils d\'alerte dans les officines.',
+                'mots_cles' => 'stock, pharmacie, tableau de bord, gestion',
+                'statut' => 'a_corriger',
+                'confidentialite' => 'public',
+                'telechargement_autorise' => true,
+                'etudiant_id' => $awa?->id,
+                'auteur_nom' => $awa?->name,
+                'type_diplome' => 'Master',
+                'date_soutenance' => '2026-10-05',
+                'cote' => 'INFO-2026-032',
+                'filiere_id' => $filieres['INFO'],
+                'annee_id' => $annees['2026-2027'],
+                'vues' => 5,
+                'date_depot' => '2026-11-12 08:30:00',
+            ],
         ];
 
         foreach ($memoires as $index => $memoire) {

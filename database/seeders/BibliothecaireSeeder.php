@@ -10,15 +10,15 @@ class BibliothecaireSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'biblio@eneam.bj'],
-            [
-                'name' => 'Bibliothécaire ENEAM',
-                'password' => Hash::make('password'),
-                'role' => 'bibliothecaire',
-                'matricule' => null,
-                'email_verified_at' => now(),
-            ]
-        );
+        $biblio = User::firstOrNew(['email' => 'biblio@eneam.bj']);
+
+        $biblio->forceFill([
+            'name' => 'Bibliothécaire ENEAM',
+            'password' => Hash::make('password'),
+            'role' => 'bibliothecaire',
+            'matricule' => null,
+            'actif' => true,
+            'email_verified_at' => now(),
+        ])->save();
     }
 }

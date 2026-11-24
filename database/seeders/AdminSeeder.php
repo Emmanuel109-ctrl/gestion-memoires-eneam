@@ -10,15 +10,15 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'admin@eneam.bj'],
-            [
-                'name' => 'Administrateur ENEAM',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'matricule' => null,
-                'email_verified_at' => now(),
-            ]
-        );
+        $admin = User::firstOrNew(['email' => 'admin@eneam.bj']);
+
+        $admin->forceFill([
+            'name' => 'Administrateur ENEAM',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'matricule' => null,
+            'actif' => true,
+            'email_verified_at' => now(),
+        ])->save();
     }
 }

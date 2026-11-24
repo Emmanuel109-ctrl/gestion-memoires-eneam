@@ -23,6 +23,7 @@
                     $etats = [
                         'soumis'          => ['Soumis', 'bg-slate-400'],
                         'en_verification' => ['En vérification', 'bg-amber-400'],
+                        'a_corriger'      => ['À corriger', 'bg-orange-400'],
                         'valide'          => ['Validé', 'bg-emerald-500'],
                         'rejete'          => ['Rejeté', 'bg-rose-500'],
                     ];

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -23,7 +24,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
         'matricule',
     ];
 
@@ -47,6 +47,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'actif' => 'boolean',
         ];
     }
 
@@ -58,6 +59,16 @@ class User extends Authenticatable
     public function validations(): HasMany
     {
         return $this->hasMany(Validation::class, 'validateur_id');
+    }
+
+    public function favoris(): BelongsToMany
+    {
+        return $this->belongsToMany(Memoire::class, 'favoris')->withTimestamps();
+    }
+
+    public function historiquesLecture(): HasMany
+    {
+        return $this->hasMany(HistoriqueLecture::class);
     }
 
     public function isAdmin(): bool

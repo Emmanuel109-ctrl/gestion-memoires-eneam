@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', ['etudiant', 'bibliothecaire', 'admin'])->default('etudiant')->after('email');
             $table->string('matricule')->nullable()->unique()->after('role');
+            $table->boolean('actif')->default(true)->after('matricule');
         });
     }
 

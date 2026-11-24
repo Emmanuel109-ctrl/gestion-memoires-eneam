@@ -12,11 +12,15 @@ class Validation extends Model
         'validateur_id',
         'statut',
         'motif',
-        'date_validation',
+        'conforme_version_papier',
+        'format_conforme',
+        'date_decision',
     ];
 
     protected $casts = [
-        'date_validation' => 'datetime',
+        'conforme_version_papier' => 'boolean',
+        'format_conforme' => 'boolean',
+        'date_decision' => 'datetime',
     ];
 
     public function memoire(): BelongsTo

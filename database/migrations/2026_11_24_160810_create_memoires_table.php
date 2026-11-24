@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('mots_cles')->nullable();
             $table->string('fichier_pdf');
             $table->string('fichier_hash', 64)->nullable()->unique();
-            $table->enum('statut', ['soumis', 'en_verification', 'valide', 'rejete'])->default('soumis');
+            $table->enum('statut', ['soumis', 'en_verification', 'a_corriger', 'valide', 'rejete'])->default('soumis');
             $table->enum('confidentialite', ['public', 'interne', 'restreint'])->default('public');
             $table->boolean('telechargement_autorise')->default(true);
             $table->date('date_embargo')->nullable();

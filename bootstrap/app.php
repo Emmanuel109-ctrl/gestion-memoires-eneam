@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+
+        // Déconnecte les comptes désactivés, même avec une session déjà ouverte.
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureAccountIsActive::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

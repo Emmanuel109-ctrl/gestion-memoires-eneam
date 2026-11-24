@@ -42,4 +42,22 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Comptes de rôle (le rôle n'est volontairement pas "fillable").
+     */
+    public function admin(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->forceFill(['role' => 'admin'])->save());
+    }
+
+    public function bibliothecaire(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->forceFill(['role' => 'bibliothecaire'])->save());
+    }
+
+    public function inactif(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->forceFill(['actif' => false])->save());
+    }
 }

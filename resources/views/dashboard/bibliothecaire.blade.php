@@ -2,22 +2,115 @@
     <x-slot name="header">
         <div>
             <h1 class="text-base font-semibold text-slate-900">Tableau de bord — Bibliothèque</h1>
-            <p class="text-xs text-slate-500">Suivi des dépôts et des validations</p>
+            <p class="text-xs text-slate-500">Pilotage des dépôts et de la vérification documentaire</p>
         </div>
     </x-slot>
 
     <div class="space-y-6">
+        {{-- Indicateurs --}}
         <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <x-stat-card label="À vérifier" :value="$nbEnAttente" hint="Priorité du jour" icon="clock" tone="amber" />
+            <x-stat-card label="Mémoires enregistrés" :value="$nbTotal" hint="Fonds documentaire" icon="book" tone="indigo" />
+            <x-stat-card label="En attente de vérification" :value="$nbEnAttente" hint="Dossiers à traiter" icon="clock" tone="amber" />
             <x-stat-card label="Validés" :value="$nbValides" hint="Consultables au catalogue" icon="check" tone="emerald" />
-            <x-stat-card label="Rejetés" :value="$nbRejetes" hint="Motif à communiquer" icon="book" tone="rose" />
-            <x-stat-card label="Total" :value="$nbTotal" hint="Fonds documentaire" icon="book" tone="indigo" />
+            <x-stat-card label="Étudiants actifs" :value="$nbEtudiants" hint="Comptes étudiants" icon="users" tone="slate" />
         </section>
 
+        <div class="grid gap-6 xl:grid-cols-2">
+            {{-- Répartition --}}
+            <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-900">Répartition des dossiers</h2>
+                        <p class="mt-1 text-xs text-slate-500">État du fonds documentaire</p>
+                    </div>
+                    @if (Route::has('memoires.index'))
+                        <a href="{{ route('memoires.index') }}"
+                           class="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-200">
+                            Voir tous les mémoires →
+                        </a>
+                    @endif
+                </div>
+
+                @php
+                    $etats = [
+                        'en_verification' => ['En vérification', 'bg-amber-400'],
+                        'a_corriger'      => ['À corriger', 'bg-orange-400'],
+                        'valide'          => ['Validés', 'bg-emerald-500'],
+                        'rejete'          => ['Rejetés', 'bg-rose-500'],
+                    ];
+                @endphp
+
+                <div class="mt-5 grid grid-cols-2 gap-3">
+                    @foreach ($etats as $cle => [$libelle, $couleur])
+                        @php
+                            $nombre = (int) ($repartition[$cle] ?? 0);
+                            $pourcentage = $nbTotal > 0 ? round($nombre * 100 / $nbTotal) : 0;
+                        @endphp
+                        <div class="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+                            <div class="flex items-center gap-2">
+                                <span class="h-2 w-2 rounded-full {{ $couleur }}"></span>
+                                <span class="text-xs font-medium text-slate-600">{{ $libelle }}</span>
+                            </div>
+                            <p class="mt-2 text-2xl font-semibold leading-none text-slate-900">{{ $nombre }}</p>
+                            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200">
+                                <div class="h-full rounded-full {{ $couleur }}" style="width: {{ $pourcentage }}%"></div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+
+            {{-- Activités récentes --}}
+            <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-900">Activités récentes</h2>
+                        <p class="mt-1 text-xs text-slate-500">Dépôts et décisions de validation</p>
+                    </div>
+                    <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600">
+                        Aujourd'hui
+                    </span>
+                </div>
+
+                @php
+                    $pastilles = [
+                        'emerald' => 'bg-emerald-500',
+                        'rose'    => 'bg-rose-500',
+                        'orange'  => 'bg-orange-400',
+                        'amber'   => 'bg-amber-400',
+                        'indigo'  => 'bg-indigo-500',
+                    ];
+                @endphp
+
+                @if ($activites->isEmpty())
+                    <div class="py-10 text-center">
+                        <p class="text-sm font-medium text-slate-700">Aucune activité pour le moment</p>
+                        <p class="mt-1 text-xs text-slate-500">Les dépôts et validations apparaîtront ici.</p>
+                    </div>
+                @else
+                    <ul class="mt-4 divide-y divide-slate-100">
+                        @foreach ($activites as $activite)
+                            <li class="flex gap-3 py-3">
+                                <span class="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full {{ $pastilles[$activite['ton']] ?? 'bg-slate-400' }}"></span>
+                                <div class="min-w-0 flex-1">
+                                    <p class="truncate text-sm font-medium text-slate-800">{{ $activite['titre'] }}</p>
+                                    <p class="mt-0.5 text-xs text-slate-500">{{ $activite['sous_titre'] }}</p>
+                                </div>
+                                <span class="whitespace-nowrap text-[11px] text-slate-400">
+                                    {{ $activite['date']?->diffForHumans() ?? '—' }}
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </section>
+        </div>
+
+        {{-- File de vérification --}}
         <section class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
                 <div>
-                    <h2 class="text-sm font-semibold text-slate-900">File de vérification</h2>
+                    <h2 class="text-sm font-semibold text-slate-900">File de vérification documentaire</h2>
                     <p class="text-xs text-slate-500">Dépôts les plus anciens en premier</p>
                 </div>
                 <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
@@ -67,7 +160,7 @@
         </section>
 
         <p class="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-3 text-xs text-slate-500">
-            L'acceptation et le rejet des mémoires (avec motif) seront branchés au lot 2.
+            L'écran de vérification (checklist, conformité du document physique, motif de rejet) sera branché au lot 2.
         </p>
     </div>
 </x-app-layout>

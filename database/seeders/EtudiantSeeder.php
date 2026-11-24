@@ -24,16 +24,16 @@ class EtudiantSeeder extends Seeder
         ];
 
         foreach ($etudiants as $etudiant) {
-            User::updateOrCreate(
-                ['matricule' => $etudiant['matricule']],
-                [
-                    'name' => $etudiant['name'],
-                    'email' => $etudiant['email'],
-                    'password' => Hash::make('password'),
-                    'role' => 'etudiant',
-                    'email_verified_at' => now(),
-                ]
-            );
+            $user = User::firstOrNew(['matricule' => $etudiant['matricule']]);
+
+            $user->forceFill([
+                'name' => $etudiant['name'],
+                'email' => $etudiant['email'],
+                'password' => Hash::make('password'),
+                'role' => 'etudiant',
+                'actif' => true,
+                'email_verified_at' => now(),
+            ])->save();
         }
     }
 }

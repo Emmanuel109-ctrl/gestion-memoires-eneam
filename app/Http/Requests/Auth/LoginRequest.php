@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -57,6 +58,17 @@ class LoginRequest extends FormRequest
             $champ => $identifiant,
             'password' => (string) $this->input('password'),
         ];
+
+        // Un compte désactivé par l'administration ne peut plus se connecter.
+        $candidat = User::where($champ, $identifiant)->first();
+
+        if ($candidat !== null && ! $candidat->actif) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'identifiant' => 'Ce compte est désactivé. Contactez la bibliothèque.',
+            ]);
+        }
 
         if (! Auth::attempt($identifiants, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());

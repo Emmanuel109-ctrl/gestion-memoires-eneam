@@ -34,11 +34,12 @@
             </div>
         </section>
 
-        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <x-stat-card label="Mes dépôts" :value="$nbDepots" hint="Tous statuts" icon="book" tone="indigo" />
             <x-stat-card label="Validés" :value="$nbValides" hint="Consultables" icon="check" tone="emerald" />
             <x-stat-card label="En attente" :value="$nbEnAttente" hint="Soumis ou en vérification" icon="clock" tone="amber" />
-            <x-stat-card label="Rejetés" :value="$nbRejetes" hint="À corriger" icon="book" tone="rose" />
+            <x-stat-card label="À corriger" :value="$nbACorriger" hint="Correction demandée" icon="book" tone="rose" />
+            <x-stat-card label="Rejetés" :value="$nbRejetes" hint="Non retenus" icon="book" tone="slate" />
         </section>
 
         <section class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">

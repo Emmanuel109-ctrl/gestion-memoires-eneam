@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             BibliothecaireSeeder::class,
             EtudiantSeeder::class,
             MemoireSeeder::class,
+            ValidationSeeder::class,
         ]);
     }
 }
