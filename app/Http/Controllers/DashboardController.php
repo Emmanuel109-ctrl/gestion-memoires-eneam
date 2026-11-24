@@ -36,20 +36,20 @@ class DashboardController extends Controller
         $repartition = $this->repartitionParStatut();
 
         return view('dashboard.admin', [
-            'nbFilieres'   => Filiere::count(),
-            'nbAnnees'     => AnneeAcademique::count(),
-            'nbMemoires'   => Memoire::count(),
-            'nbEnAttente'  => (int) ($repartition['en_verification'] ?? 0),
-            'nbACorriger'  => (int) ($repartition['a_corriger'] ?? 0),
-            'repartition'  => $repartition,
-            'dernieres'    => $dernieres,
+            'nbFilieres' => Filiere::count(),
+            'nbAnnees' => AnneeAcademique::count(),
+            'nbMemoires' => Memoire::count(),
+            'nbEnAttente' => (int) ($repartition['en_verification'] ?? 0),
+            'nbACorriger' => (int) ($repartition['a_corriger'] ?? 0),
+            'repartition' => $repartition,
+            'dernieres' => $dernieres,
         ]);
     }
 
     private function tableauDeBordBibliothecaire(): View
     {
         $file = Memoire::with(['filiere', 'annee', 'etudiant'])
-            ->where('statut', 'en_verification')
+            ->whereIn('statut', ['soumis', 'en_verification'])
             ->orderBy('date_depot')
             ->limit(8)
             ->get();
@@ -57,15 +57,15 @@ class DashboardController extends Controller
         $repartition = $this->repartitionParStatut();
 
         return view('dashboard.bibliothecaire', [
-            'nbTotal'     => Memoire::count(),
-            'nbEnAttente' => (int) ($repartition['en_verification'] ?? 0),
+            'nbTotal' => Memoire::count(),
+            'nbEnAttente' => Memoire::whereIn('statut', ['soumis', 'en_verification'])->count(),
             'nbACorriger' => (int) ($repartition['a_corriger'] ?? 0),
-            'nbValides'   => (int) ($repartition['valide'] ?? 0),
-            'nbRejetes'   => (int) ($repartition['rejete'] ?? 0),
+            'nbValides' => (int) ($repartition['valide'] ?? 0),
+            'nbRejetes' => (int) ($repartition['rejete'] ?? 0),
             'nbEtudiants' => User::where('role', 'etudiant')->where('actif', true)->count(),
             'repartition' => $repartition,
-            'file'        => $file,
-            'activites'   => $this->activitesRecentes(),
+            'file' => $file,
+            'activites' => $this->activitesRecentes(),
         ]);
     }
 
@@ -74,12 +74,12 @@ class DashboardController extends Controller
         $requete = Memoire::where('etudiant_id', $utilisateur->id);
 
         return view('dashboard.etudiant', [
-            'nbDepots'    => (clone $requete)->count(),
-            'nbValides'   => (clone $requete)->where('statut', 'valide')->count(),
+            'nbDepots' => (clone $requete)->count(),
+            'nbValides' => (clone $requete)->where('statut', 'valide')->count(),
             'nbEnAttente' => (clone $requete)->whereIn('statut', ['soumis', 'en_verification'])->count(),
             'nbACorriger' => (clone $requete)->where('statut', 'a_corriger')->count(),
-            'nbRejetes'   => (clone $requete)->where('statut', 'rejete')->count(),
-            'derniers'    => $requete->with(['filiere', 'annee'])
+            'nbRejetes' => (clone $requete)->where('statut', 'rejete')->count(),
+            'derniers' => $requete->with(['filiere', 'annee'])
                 ->orderByDesc('date_depot')
                 ->limit(5)
                 ->get(),

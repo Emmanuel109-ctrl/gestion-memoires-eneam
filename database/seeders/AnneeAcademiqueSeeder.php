@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AnneeAcademique;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AnneeAcademiqueSeeder extends Seeder
 {
@@ -16,11 +17,15 @@ class AnneeAcademiqueSeeder extends Seeder
             ['libelle' => '2026-2027', 'date_debut' => '2026-10-01', 'date_fin' => '2027-07-31', 'active' => true],
         ];
 
-        foreach ($annees as $annee) {
-            AnneeAcademique::updateOrCreate(
-                ['libelle' => $annee['libelle']],
-                $annee
-            );
-        }
+        DB::transaction(function () use ($annees): void {
+            AnneeAcademique::query()->where('active', true)->update(['active' => false]);
+
+            foreach ($annees as $annee) {
+                AnneeAcademique::updateOrCreate(
+                    ['libelle' => $annee['libelle']],
+                    $annee
+                );
+            }
+        });
     }
 }

@@ -18,8 +18,8 @@ class MemoireSeeder extends Seeder
 {
     public function run(): void
     {
-        $awa = User::where('matricule', 'ETU-2024-001')->first();
-        $kossi = User::where('matricule', 'ETU-2024-002')->first();
+        $awa = User::where('matricule', '20240001')->first();
+        $kossi = User::where('matricule', '20240002')->first();
 
         $filieres = Filiere::pluck('id', 'code');
         $annees = AnneeAcademique::pluck('id', 'libelle');

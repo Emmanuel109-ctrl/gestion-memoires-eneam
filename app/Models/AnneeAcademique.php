@@ -16,6 +16,12 @@ class AnneeAcademique extends Model
         'active',
     ];
 
+    protected $casts = [
+        'date_debut' => 'date',
+        'date_fin' => 'date',
+        'active' => 'boolean',
+    ];
+
     public function memoires(): HasMany
     {
         return $this->hasMany(Memoire::class);

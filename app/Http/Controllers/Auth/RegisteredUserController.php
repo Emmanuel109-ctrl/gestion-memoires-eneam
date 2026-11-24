@@ -35,21 +35,27 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->merge([
-            'matricule' => mb_strtoupper(trim((string) $request->input('matricule'))),
+            'matricule' => trim((string) $request->input('matricule')),
         ]);
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'matricule' => [
                 'required',
-                'string',
-                'min:4',
-                'max:20',
-                'regex:/^[A-Z0-9\-\/]+$/',
+                'regex:/^[0-9]{8}$/',
                 'unique:'.User::class.',matricule',
             ],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:'.User::class,
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'matricule.regex' => 'Le matricule doit contenir exactement 8 chiffres.',
         ]);
 
         $user = User::create([

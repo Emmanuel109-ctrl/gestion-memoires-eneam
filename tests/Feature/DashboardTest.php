@@ -42,14 +42,14 @@ class DashboardTest extends TestCase
     {
         $etudiant = User::factory()->create([
             'role' => 'etudiant',
-            'matricule' => 'ETU-2024-001',
+            'matricule' => '20240001',
         ]);
 
         $this->actingAs($etudiant)
             ->get('/dashboard')
             ->assertOk()
             ->assertSee('Mon espace étudiant')
-            ->assertSee('ETU-2024-001');
+            ->assertSee('20240001');
     }
 
     public function test_authenticated_user_is_redirected_from_root_to_dashboard(): void

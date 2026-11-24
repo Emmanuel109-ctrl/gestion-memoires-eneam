@@ -14,12 +14,12 @@ class EtudiantSeeder extends Seeder
             [
                 'name' => 'Awa HOUNKPE',
                 'email' => 'etudiant@eneam.bj',
-                'matricule' => 'ETU-2024-001',
+                'matricule' => '20240001',
             ],
             [
                 'name' => 'Kossi ADJOVI',
                 'email' => 'etudiant2@eneam.bj',
-                'matricule' => 'ETU-2024-002',
+                'matricule' => '20240002',
             ],
         ];
 

@@ -14,11 +14,11 @@ class MatriculeLoginTest extends TestCase
     {
         $etudiant = User::factory()->create([
             'role' => 'etudiant',
-            'matricule' => 'ETU-2024-001',
+            'matricule' => '20240001',
         ]);
 
         $response = $this->post('/login', [
-            'identifiant' => 'etu-2024-001',
+            'identifiant' => '20240001',
             'password' => 'password',
         ]);
 

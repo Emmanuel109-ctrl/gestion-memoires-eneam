@@ -2,7 +2,7 @@
     <div class="mb-6">
         <h1 class="text-xl font-semibold text-slate-900">Créer un compte étudiant</h1>
         <p class="mt-1 text-sm text-slate-500">
-            Votre matricule vous identifie dans la bibliothèque. L'adresse e-mail sert à réinitialiser le mot de passe.
+            Votre matricule à 8 chiffres vous identifie dans la bibliothèque. Indiquez une adresse e-mail valide pour récupérer votre compte.
         </p>
     </div>
 
@@ -20,8 +20,8 @@
             <x-input-label for="matricule" value="Matricule" />
             <x-text-input id="matricule" class="mt-1 block w-full" type="text" name="matricule"
                           :value="old('matricule')" required autocomplete="username"
-                          placeholder="ETU-2024-001" />
-            <p class="mt-1 text-xs text-slate-500">4 à 20 caractères : lettres, chiffres, tiret ou barre oblique.</p>
+                          placeholder="12345678" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" />
+            <p class="mt-1 text-xs text-slate-500">Saisissez les 8 chiffres de votre matricule.</p>
             <x-input-error :messages="$errors->get('matricule')" class="mt-2" />
         </div>
 

@@ -153,7 +153,7 @@ return [
 
     'custom' => [
         'matricule' => [
-            'regex' => 'Le matricule ne peut contenir que des lettres, des chiffres, des tirets ou des barres obliques.',
+            'regex' => 'Le matricule doit contenir exactement 8 chiffres.',
         ],
     ],
 

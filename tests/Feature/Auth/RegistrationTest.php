@@ -17,11 +17,11 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_students_can_register_with_their_matricule(): void
+    public function test_student_can_register_with_an_eight_digit_matricule_and_personal_email(): void
     {
         $response = $this->post('/register', [
             'name' => 'Test Étudiant',
-            'matricule' => 'ETU-2024-999',
+            'matricule' => '00123456',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -32,7 +32,7 @@ class RegistrationTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
-            'matricule' => 'ETU-2024-999',
+            'matricule' => '00123456',
             'role' => 'etudiant',
         ]);
     }
@@ -49,14 +49,27 @@ class RegistrationTest extends TestCase
 
     public function test_matricule_must_be_unique(): void
     {
-        User::factory()->create(['matricule' => 'ETU-2024-001']);
+        User::factory()->create(['matricule' => '20240001']);
 
         $this->post('/register', [
             'name' => 'Doublon',
-            'matricule' => 'ETU-2024-001',
+            'matricule' => '20240001',
             'email' => 'doublon@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ])->assertSessionHasErrors('matricule');
+    }
+
+    public function test_matricule_must_contain_exactly_eight_digits(): void
+    {
+        foreach (['1234567', '123456789', '1234ABCD'] as $index => $matricule) {
+            $this->post('/register', [
+                'name' => 'Matricule invalide',
+                'matricule' => $matricule,
+                'email' => "invalid{$index}@example.com",
+                'password' => 'password',
+                'password_confirmation' => 'password',
+            ])->assertSessionHasErrors('matricule');
+        }
     }
 }

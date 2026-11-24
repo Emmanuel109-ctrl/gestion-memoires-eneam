@@ -21,7 +21,7 @@
                           required
                           autofocus
                           autocomplete="username"
-                          placeholder="ETU-2024-001 ou nom@eneam.bj" />
+                          placeholder="12345678 ou adresse e-mail" />
             <x-input-error :messages="$errors->get('identifiant')" class="mt-2" />
         </div>
 

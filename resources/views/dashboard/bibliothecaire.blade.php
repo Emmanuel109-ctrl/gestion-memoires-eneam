@@ -133,6 +133,7 @@
                                 <th class="px-5 py-3 font-semibold">Filière</th>
                                 <th class="px-5 py-3 font-semibold">Année</th>
                                 <th class="px-5 py-3 font-semibold">Déposé le</th>
+                                <th class="px-5 py-3 text-right font-semibold">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -151,6 +152,14 @@
                                     <td class="whitespace-nowrap px-5 py-3 text-slate-600">
                                         {{ $memoire->date_depot?->translatedFormat('d/m/Y') ?? '—' }}
                                     </td>
+                                    <td class="px-5 py-3 text-right">
+                                        @if (Route::has('validations.show'))
+                                            <a href="{{ route('validations.show', $memoire) }}"
+                                               class="font-semibold text-indigo-600 hover:text-indigo-800">
+                                                Examiner
+                                            </a>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -159,8 +168,5 @@
             @endif
         </section>
 
-        <p class="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-3 text-xs text-slate-500">
-            L'écran de vérification (checklist, conformité du document physique, motif de rejet) sera branché au lot 2.
-        </p>
     </div>
 </x-app-layout>

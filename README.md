@@ -40,8 +40,8 @@ si votre MySQL n'utilise pas la configuration XAMPP par défaut.
 |---|---|---|
 | Administrateur | `admin@eneam.bj` | `password` |
 | Bibliothécaire | `biblio@eneam.bj` | `password` |
-| Étudiant | `ETU-2024-001` | `password` |
-| Étudiant | `ETU-2024-002` | `password` |
+| Étudiant | `20240001` | `password` |
+| Étudiant | `20240002` | `password` |
 
 Les étudiants peuvent aussi se connecter avec leur adresse e-mail (`etudiant@eneam.bj`,
 `etudiant2@eneam.bj`).
