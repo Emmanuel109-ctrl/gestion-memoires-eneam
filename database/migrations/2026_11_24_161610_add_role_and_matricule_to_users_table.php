@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', ['etudiant', 'bibliothecaire', 'admin'])->default('etudiant')->after('email');
             $table->string('matricule')->nullable()->unique()->after('role');
-            $table->boolean('actif')->default(true)->after('matricule');
         });
     }
 
@@ -24,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'matricule', 'actif']);
+            $table->dropColumn(['role', 'matricule']);
         });
     }
 };
