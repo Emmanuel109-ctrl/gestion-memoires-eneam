@@ -15,6 +15,9 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
+        $response->assertSee("C'est votre première connexion ?", false)
+            ->assertSee('Vous choisirez votre mot de passe pendant cette étape.', false)
+            ->assertSee('Activer mon compte étudiant');
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void

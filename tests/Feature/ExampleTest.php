@@ -2,17 +2,22 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
-     * Un visiteur non connecté est envoyé vers la page de connexion.
+     * Le site commence par une page d'accueil publique, jamais par la connexion.
      */
-    public function test_guest_is_redirected_to_login(): void
+    public function test_guest_sees_the_public_home_page(): void
     {
         $response = $this->get('/');
 
-        $response->assertRedirect('/login');
+        $response->assertOk();
+        $response->assertSee('Explorer le catalogue');
+        $response->assertSee('Se connecter');
     }
 }

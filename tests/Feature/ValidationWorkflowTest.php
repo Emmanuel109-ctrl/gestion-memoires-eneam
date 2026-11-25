@@ -83,9 +83,9 @@ class ValidationWorkflowTest extends TestCase
     private function createMemoire(): Memoire
     {
         $filiere = Filiere::create([
-            'nom' => 'Informatique',
+            'nom' => 'Informatique de gestion',
             'code' => 'INFO',
-            'description' => 'Filière Informatique',
+            'description' => 'Filière de Licence (Bac+3)',
         ]);
         $annee = AnneeAcademique::create([
             'libelle' => '2026-2027',

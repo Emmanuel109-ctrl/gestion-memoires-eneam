@@ -12,6 +12,7 @@ class HistoriqueLecture extends Model
     protected $fillable = [
         'user_id',
         'memoire_id',
+        'type',
     ];
 
     public function user(): BelongsTo

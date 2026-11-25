@@ -15,7 +15,7 @@
         <section class="overflow-hidden rounded-2xl bg-gradient-to-br from-eneam-900 via-eneam-800 to-eneam-600 px-6 py-7 text-white shadow-soft">
             <div class="flex flex-wrap items-center justify-between gap-5">
                 <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-eneam-200">Bienvenue</p>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-eneam-200">Espace personnel</p>
                     <h2 class="mt-2 text-2xl font-semibold tracking-tight">{{ $etudiant->name }}</h2>
                     <p class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-eneam-100">
                         <span>Matricule : <strong class="font-semibold text-white">{{ $etudiant->matricule ?? 'non renseigné' }}</strong></span>

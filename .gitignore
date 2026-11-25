@@ -22,3 +22,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Données locales du projet : ne jamais versionner les annuaires ni les PDF réels.
+/database/data/*.csv
+!/database/data/*.example.csv
+/storage/app/private/memoires/*
+!/storage/app/private/memoires/.gitkeep

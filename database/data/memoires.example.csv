@@ -1,0 +1,2 @@
+fichier;titre;auteur;matricule;filiere;annee;type_diplome;confidentialite;telechargement_autorise;resume;mots_cles;date_soutenance;date_embargo;couverture_page
+"exemple.pdf";"Titre du mémoire de démonstration";"Étudiant Exemple";"";"INFO";"2025-2026";"Licence";"public";"1";"Résumé court du mémoire, sans données personnelles réelles.";"mot-clé 1, mot-clé 2";"2026-07-31";"";"0"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\EtudiantEneam;
 use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -68,6 +69,20 @@ class LoginRequest extends FormRequest
             throw ValidationException::withMessages([
                 'identifiant' => 'Ce compte est désactivé. Contactez la bibliothèque.',
             ]);
+        }
+
+        // Un étudiant radié de l'annuaire ENEAM perd aussi l'accès, même si
+        // son compte local existe encore.
+        if ($candidat !== null && $candidat->isEtudiant() && $candidat->matricule !== null) {
+            $fiche = EtudiantEneam::where('matricule', $candidat->matricule)->first();
+
+            if ($fiche !== null && ! $fiche->actif) {
+                RateLimiter::hit($this->throttleKey());
+
+                throw ValidationException::withMessages([
+                    'identifiant' => 'Ce compte est désactivé. Contactez la bibliothèque.',
+                ]);
+            }
         }
 
         if (! Auth::attempt($identifiants, $this->boolean('remember'))) {

@@ -3,11 +3,22 @@
         <p class="eneam-eyebrow">Espace personnel</p>
         <h1 class="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Connexion</h1>
         <p class="mt-2 text-sm leading-relaxed text-slate-500">
-            Étudiants, connectez-vous avec votre matricule ENEAM à 8 chiffres. Le personnel utilise son adresse e-mail professionnelle.
+            Une seule page pour les étudiants et le personnel. Le matricule à 8 chiffres est
+            réservé aux étudiants ; le personnel utilise son adresse e-mail professionnelle.
         </p>
     </div>
 
     <x-auth-session-status class="mb-4" :status="session('status')" />
+
+    <div class="mb-5 rounded-xl border border-eneam-200 bg-eneam-50/70 p-4">
+        <p class="text-sm font-semibold text-slate-800">C'est votre première connexion ?</p>
+        <p class="mt-1 text-xs leading-relaxed text-slate-600">
+            Activez d'abord votre compte avec votre matricule et votre adresse e-mail. Vous choisirez votre mot de passe pendant cette étape.
+        </p>
+        <a href="{{ route('activation.create') }}" class="mt-2 inline-flex text-xs font-semibold text-eneam-800 underline-offset-4 hover:underline">
+            Activer mon compte étudiant
+        </a>
+    </div>
 
     <form method="POST" action="{{ route('login') }}" class="space-y-5">
         @csrf
@@ -57,12 +68,21 @@
         </x-primary-button>
     </form>
 
-    <div class="mt-7 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
-        Vous n'avez pas encore de compte ?
-        <a href="{{ route('register') }}" class="eneam-link">Créer un compte étudiant</a>
+    <div class="mt-7 space-y-3 border-t border-slate-100 pt-5 text-center text-sm text-slate-600">
+        <p>
+            <a href="{{ route('catalogue.index') }}" class="text-xs font-medium text-slate-500 hover:text-eneam-800">
+                Consulter le catalogue sans compte
+            </a>
+        </p>
+        <p>
+            <a href="{{ route('home') }}" class="text-xs font-medium text-slate-500 hover:text-eneam-800">
+                ← Retour à l'accueil
+            </a>
+        </p>
     </div>
 
     <p class="mt-5 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-500 ring-1 ring-slate-100">
-        Le matricule est attribué par l'ENEAM. Il sera vérifié par la bibliothèque lors de la première connexion.
+        Le matricule est vérifié auprès de l'annuaire ENEAM. Les comptes du personnel sont créés
+        par l'administration : aucune inscription publique n'est proposée.
     </p>
 </x-guest-layout>

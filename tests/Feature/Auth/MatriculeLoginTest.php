@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\EtudiantEneam;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -44,6 +45,27 @@ class MatriculeLoginTest extends TestCase
     {
         $this->post('/login', [
             'identifiant' => 'INCONNU-001',
+            'password' => 'password',
+        ])->assertSessionHasErrors('identifiant');
+
+        $this->assertGuest();
+    }
+
+    public function test_student_removed_from_the_roster_cannot_log_in(): void
+    {
+        $etudiant = User::factory()->create([
+            'matricule' => '20240001',
+        ]);
+
+        EtudiantEneam::create([
+            'matricule' => '20240001',
+            'nom' => $etudiant->name,
+            'email' => $etudiant->email,
+            'actif' => false,
+        ]);
+
+        $this->post('/login', [
+            'identifiant' => '20240001',
             'password' => 'password',
         ])->assertSessionHasErrors('identifiant');
 

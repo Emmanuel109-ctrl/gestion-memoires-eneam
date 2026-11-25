@@ -10,9 +10,9 @@ class DashboardTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guests_are_redirected_to_login(): void
+    public function test_guests_see_the_public_home_and_are_redirected_from_dashboard(): void
     {
-        $this->get('/')->assertRedirect('/login');
+        $this->get('/')->assertOk();
         $this->get('/dashboard')->assertRedirect('/login');
     }
 
@@ -52,12 +52,13 @@ class DashboardTest extends TestCase
             ->assertSee('20240001');
     }
 
-    public function test_authenticated_user_is_redirected_from_root_to_dashboard(): void
+    public function test_authenticated_user_sees_the_public_home_page(): void
     {
         $user = User::factory()->create(['matricule' => '20240003']);
 
         $this->actingAs($user)
             ->get('/')
-            ->assertRedirect('/dashboard');
+            ->assertOk()
+            ->assertSee('Mon espace');
     }
 }

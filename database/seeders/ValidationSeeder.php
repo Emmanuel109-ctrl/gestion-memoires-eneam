@@ -28,15 +28,7 @@ class ValidationSeeder extends Seeder
                 'date_decision' => '2026-06-25 10:00:00',
             ],
             [
-                'cote' => 'GC-2026-003',
-                'statut' => 'valide',
-                'motif' => null,
-                'conforme_version_papier' => true,
-                'format_conforme' => true,
-                'date_decision' => '2026-06-04 15:10:00',
-            ],
-            [
-                'cote' => 'ECO-2026-021',
+                'cote' => 'BFM-2026-021',
                 'statut' => 'rejete',
                 'motif' => 'Le fichier PDF ne correspond pas à la version physique déposée.',
                 'conforme_version_papier' => true,
