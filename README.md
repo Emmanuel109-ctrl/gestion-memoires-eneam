@@ -1,15 +1,18 @@
 # Bibliothèque des mémoires — ENEAM
 
-Application Laravel de gestion et de consultation des mémoires de l'ENEAM.
+Application Laravel de gestion et de consultation des mémoires de l'École Nationale d'Économie Appliquée et de Management (ENEAM).
 
-## Fonctionnalités du lot 1
+## Fonctionnalités
 
-- Connexion par **matricule** pour les étudiants, par **e-mail** pour le personnel.
-- Inscription publique réservée aux étudiants (matricule obligatoire et unique).
-- Trois rôles : `admin`, `bibliothecaire`, `etudiant`, avec un tableau de bord dédié.
-- Middleware `role` prêt pour protéger les futures routes métier.
-- Interface entièrement en français (Breeze traduit, messages de validation FR).
-- Référentiels filières et années académiques, jeu de mémoires de démonstration.
+- Connexion par **matricule à 8 chiffres** pour les étudiants, par **e-mail** pour le personnel.
+- Inscription publique réservée aux étudiants : matricule obligatoire, unique, composé de 8 chiffres.
+- Trois rôles : `admin`, `bibliothecaire`, `etudiant`, chacun avec son tableau de bord.
+- Middleware `role` pour protéger les routes métier.
+- Middleware `EnsureAccountIsActive` : un compte désactivé (`users.actif = false`) ne peut plus se connecter et ses sessions sont fermées.
+- Référentiel des **filières** et des **années académiques**.
+- **Vérification documentaire** : file d'attente, fiche de contrôle, cases de conformité, décision (`valide`, `a_corriger`, `rejete`) avec motif obligatoire.
+- Cycle de vie d'un mémoire : `soumis` → `en_verification` → `valide` (+ `a_corriger`, `rejete`).
+- Interface en français, identité visuelle alignée sur le site officiel de l'ENEAM (Montserrat, palette bleue `eneam`, logo officiel).
 
 ## Prérequis
 
@@ -36,15 +39,25 @@ si votre MySQL n'utilise pas la configuration XAMPP par défaut.
 
 ## Comptes de démonstration
 
-| Rôle | Identifiant | Mot de passe |
-|---|---|---|
-| Administrateur | `admin@eneam.bj` | `password` |
-| Bibliothécaire | `biblio@eneam.bj` | `password` |
-| Étudiant | `20240001` | `password` |
-| Étudiant | `20240002` | `password` |
+Mot de passe commun : `password`
+
+| Rôle | Identifiant |
+|---|---|
+| Administrateur | `admin@eneam.bj` |
+| Bibliothécaire | `biblio@eneam.bj` |
+| Étudiant | `20240001` |
+| Étudiant | `20240002` |
 
 Les étudiants peuvent aussi se connecter avec leur adresse e-mail (`etudiant@eneam.bj`,
 `etudiant2@eneam.bj`).
+
+## Règles métier
+
+- Un matricule contient **exactement 8 chiffres** (`^[0-9]{8}$`).
+- Le matricule est unique et sert d'identifiant de connexion.
+- Le champ `role` n'est pas mass-assignable : il est attribué explicitement côté serveur.
+- Une décision `a_corriger` ou `rejete` exige un motif.
+- Le matricule est auto-déclaré ; la bibliothèque le vérifie lors du contrôle du dossier.
 
 ## Tests
 
@@ -52,7 +65,13 @@ Les étudiants peuvent aussi se connecter avec leur adresse e-mail (`etudiant@en
 php artisan test
 ```
 
+## Documentation
+
+- [`docs/RESUME_LOT1.md`](docs/RESUME_LOT1.md) — détail technique du lot 1.
+- [`docs/RESUME_CAMARADES.md`](docs/RESUME_CAMARADES.md) — résumé pour l'équipe.
+- [`docs/MAQUETTE_IRREGULARITES.md`](docs/MAQUETTE_IRREGULARITES.md) — écarts relevés dans la maquette.
+
 ## Prochaines étapes
 
-- **Lot 2** : dépôt de mémoire (PDF privé, hash anti-doublon), workflow de validation, catalogue, recherche.
-- **Lot 3** : lecteur PDF, embargo/confidentialité, statistiques, gestion des utilisateurs et des référentiels.
+- **Lot 2** : dépôt de mémoire (PDF privé, hash anti-doublon), catalogue, recherche, fiche mémoire.
+- **Lot 3** : lecteur PDF, embargo/confidentialité, notifications, favoris, historique de lecture, gestion des utilisateurs.

@@ -39,10 +39,15 @@ class DashboardController extends Controller
             'nbFilieres' => Filiere::count(),
             'nbAnnees' => AnneeAcademique::count(),
             'nbMemoires' => Memoire::count(),
-            'nbEnAttente' => (int) ($repartition['en_verification'] ?? 0),
+            'nbEnAttente' => (int) (($repartition['soumis'] ?? 0) + ($repartition['en_verification'] ?? 0)),
+            'nbValides' => (int) ($repartition['valide'] ?? 0),
             'nbACorriger' => (int) ($repartition['a_corriger'] ?? 0),
+            'nbUtilisateurs' => User::where('actif', true)->count(),
+            'nbEtudiants' => User::where('role', 'etudiant')->where('actif', true)->count(),
             'repartition' => $repartition,
             'dernieres' => $dernieres,
+            'activites' => $this->activitesRecentes(),
+            'parFiliere' => Filiere::withCount('memoires')->orderByDesc('memoires_count')->take(5)->get(),
         ]);
     }
 

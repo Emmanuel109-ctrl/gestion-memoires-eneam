@@ -37,6 +37,27 @@ class RegistrationTest extends TestCase
         ]);
     }
 
+    public function test_registration_cannot_escalate_to_an_administrator_role(): void
+    {
+        $this->post('/register', [
+            'name' => 'Étudiant curieux',
+            'matricule' => '20240077',
+            'email' => 'curieux@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'role' => 'admin',
+        ])->assertRedirect(route('dashboard', absolute: false));
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'curieux@example.com',
+            'role' => 'etudiant',
+        ]);
+        $this->assertDatabaseMissing('users', [
+            'email' => 'curieux@example.com',
+            'role' => 'admin',
+        ]);
+    }
+
     public function test_matricule_is_required(): void
     {
         $this->post('/register', [

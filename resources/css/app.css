@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-[#f4f6fb];
+    }
+
+    ::selection {
+        @apply bg-eneam-200 text-eneam-900;
+    }
+
+    :focus-visible {
+        @apply outline-none ring-2 ring-eneam-500 ring-offset-2;
+    }
+}
+
+@layer components {
+    .eneam-card {
+        @apply rounded-2xl bg-white shadow-soft ring-1 ring-slate-200/70;
+    }
+
+    .eneam-eyebrow {
+        @apply text-[11px] font-semibold uppercase tracking-[0.18em] text-eneam-700;
+    }
+
+    .eneam-link {
+        @apply font-semibold text-eneam-700 underline-offset-4 transition hover:text-eneam-900 hover:underline;
+    }
+
+    .eneam-input {
+        @apply block w-full rounded-xl border-slate-300 bg-white text-sm shadow-sm focus:border-eneam-600 focus:ring-eneam-600;
+    }
+
+    .eneam-divider {
+        @apply border-t border-slate-100;
+    }
+}

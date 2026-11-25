@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
+            <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-eneam-700">Bibliothèque</p>
             <h1 class="text-base font-semibold text-slate-900">Tableau de bord — Bibliothèque</h1>
             <p class="text-xs text-slate-500">Pilotage des dépôts et de la vérification documentaire</p>
         </div>
@@ -8,16 +9,21 @@
 
     <div class="space-y-6">
         {{-- Indicateurs --}}
-        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <x-stat-card label="Mémoires enregistrés" :value="$nbTotal" hint="Fonds documentaire" icon="book" tone="indigo" />
-            <x-stat-card label="En attente de vérification" :value="$nbEnAttente" hint="Dossiers à traiter" icon="clock" tone="amber" />
+        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            <x-stat-card label="Mémoires enregistrés" :value="$nbTotal" hint="Fonds documentaire" icon="book" tone="eneam" />
+            <x-stat-card label="En attente" :value="$nbEnAttente" hint="Dossiers à traiter" icon="clock" tone="amber" />
+            <x-stat-card label="À corriger" :value="$nbACorriger" hint="Retour étudiant" icon="book" tone="rose" />
             <x-stat-card label="Validés" :value="$nbValides" hint="Consultables au catalogue" icon="check" tone="emerald" />
-            <x-stat-card label="Étudiants actifs" :value="$nbEtudiants" hint="Comptes étudiants" icon="users" tone="slate" />
+            <x-stat-card label="Rejetés" :value="$nbRejetes" hint="Non retenus" icon="book" tone="slate" />
         </section>
+
+        <p class="rounded-xl bg-white px-4 py-3 text-xs text-slate-500 shadow-soft ring-1 ring-slate-200/70">
+            <span class="font-semibold text-slate-700">{{ $nbEtudiants }} étudiant(s) actif(s)</span> peuvent déposer un mémoire cette année.
+        </p>
 
         <div class="grid gap-6 xl:grid-cols-2">
             {{-- Répartition --}}
-            <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
                 <div class="flex items-start justify-between gap-3">
                     <div>
                         <h2 class="text-sm font-semibold text-slate-900">Répartition des dossiers</h2>
@@ -61,7 +67,7 @@
             </section>
 
             {{-- Activités récentes --}}
-            <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
                 <div class="flex items-start justify-between gap-3">
                     <div>
                         <h2 class="text-sm font-semibold text-slate-900">Activités récentes</h2>
@@ -78,7 +84,8 @@
                         'rose'    => 'bg-rose-500',
                         'orange'  => 'bg-orange-400',
                         'amber'   => 'bg-amber-400',
-                        'indigo'  => 'bg-indigo-500',
+                        'eneam'  => 'bg-eneam-600',
+                        'indigo' => 'bg-eneam-600',
                     ];
                 @endphp
 
@@ -107,7 +114,7 @@
         </div>
 
         {{-- File de vérification --}}
-        <section class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+        <section class="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200/70">
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
                 <div>
                     <h2 class="text-sm font-semibold text-slate-900">File de vérification documentaire</h2>
@@ -155,7 +162,7 @@
                                     <td class="px-5 py-3 text-right">
                                         @if (Route::has('validations.show'))
                                             <a href="{{ route('validations.show', $memoire) }}"
-                                               class="font-semibold text-indigo-600 hover:text-indigo-800">
+                                               class="font-semibold text-eneam-600 hover:text-eneam-800">
                                                 Examiner
                                             </a>
                                         @endif

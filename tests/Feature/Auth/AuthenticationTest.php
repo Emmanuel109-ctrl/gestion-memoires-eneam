@@ -42,6 +42,20 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_inactive_users_can_not_authenticate(): void
+    {
+        $user = User::factory()->inactif()->create([
+            'matricule' => '20249999',
+        ]);
+
+        $this->post('/login', [
+            'identifiant' => '20249999',
+            'password' => 'password',
+        ])->assertSessionHasErrors('identifiant');
+
+        $this->assertGuest();
+    }
+
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();

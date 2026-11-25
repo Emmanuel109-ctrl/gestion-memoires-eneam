@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
+            <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-eneam-700">Référentiel</p>
             <h1 class="text-base font-semibold text-slate-900">Années académiques</h1>
             <p class="text-xs text-slate-500">Gérez les périodes et choisissez l’année active.</p>
         </div>
@@ -36,7 +37,7 @@
                 <label class="flex items-start gap-3 text-sm text-slate-700">
                     <input type="checkbox" name="active" value="1"
                            @checked(old('active'))
-                           class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                           class="mt-0.5 rounded border-slate-300 text-eneam-600 focus:ring-eneam-500">
                     <span>Définir comme année active</span>
                 </label>
 
@@ -82,7 +83,7 @@
                                             <form method="POST" action="{{ route('annees.activate', $annee) }}">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="font-medium text-indigo-600 hover:text-indigo-800">
+                                                <button type="submit" class="font-medium text-eneam-600 hover:text-eneam-800">
                                                     Activer
                                                 </button>
                                             </form>

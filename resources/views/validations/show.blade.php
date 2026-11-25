@@ -1,17 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
+            <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-eneam-700">Vérification documentaire</p>
             <h1 class="text-base font-semibold text-slate-900">Contrôle de conformité</h1>
             <p class="text-xs text-slate-500">Examinez le dossier et enregistrez votre décision.</p>
         </div>
     </x-slot>
 
     <div class="mx-auto max-w-5xl space-y-6">
-        <a href="{{ route('validations.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+        <a href="{{ route('validations.index') }}" class="text-sm font-medium text-eneam-600 hover:text-eneam-800">
             ← Retour à la file de validation
         </a>
 
-        <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+        <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Mémoire à examiner</p>
@@ -58,7 +59,7 @@
             @csrf
             @method('PATCH')
 
-            <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
                 <h2 class="text-sm font-semibold text-slate-900">Points de contrôle documentaires</h2>
                 <p class="mt-1 text-xs text-slate-500">Cochez les vérifications conformes au dossier.</p>
 
@@ -66,7 +67,7 @@
                     <label class="flex items-start gap-3 rounded-xl border border-slate-200 p-4">
                         <input type="checkbox" name="conforme_version_papier" value="1"
                                @checked(old('conforme_version_papier', $validation?->conforme_version_papier))
-                               class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                               class="mt-0.5 rounded border-slate-300 text-eneam-600 focus:ring-eneam-500">
                         <span>
                             <span class="block text-sm font-medium text-slate-800">Version papier conforme</span>
                             <span class="mt-1 block text-xs text-slate-500">Le document numérique correspond à l’exemplaire papier.</span>
@@ -76,7 +77,7 @@
                     <label class="flex items-start gap-3 rounded-xl border border-slate-200 p-4">
                         <input type="checkbox" name="format_conforme" value="1"
                                @checked(old('format_conforme', $validation?->format_conforme))
-                               class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                               class="mt-0.5 rounded border-slate-300 text-eneam-600 focus:ring-eneam-500">
                         <span>
                             <span class="block text-sm font-medium text-slate-800">Format conforme</span>
                             <span class="mt-1 block text-xs text-slate-500">Le PDF est lisible et respecte les exigences de format.</span>
@@ -85,7 +86,7 @@
                 </div>
             </section>
 
-            <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
                 <h2 class="text-sm font-semibold text-slate-900">Décision</h2>
                 <div class="mt-4 grid gap-3 sm:grid-cols-3">
                     @foreach ([
@@ -96,7 +97,7 @@
                         <label class="flex cursor-pointer items-center gap-2 rounded-xl border p-3 text-sm font-medium {{ $style }}">
                             <input type="radio" name="statut" value="{{ $valeur }}"
                                    @checked(old('statut', $validation?->statut) === $valeur)
-                                   class="border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                   class="border-slate-300 text-eneam-600 focus:ring-eneam-500">
                             {{ $libelle }}
                         </label>
                     @endforeach
@@ -106,7 +107,7 @@
                 <div class="mt-4">
                     <x-input-label for="motif" value="Commentaire / motif (obligatoire en cas de correction ou de rejet)" />
                     <textarea id="motif" name="motif" rows="4"
-                              class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                              class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-eneam-500 focus:ring-eneam-500"
                               maxlength="5000">{{ old('motif', $validation?->motif) }}</textarea>
                     <x-input-error :messages="$errors->get('motif')" class="mt-2" />
                 </div>

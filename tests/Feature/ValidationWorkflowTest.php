@@ -16,7 +16,7 @@ class ValidationWorkflowTest extends TestCase
 
     public function test_bibliothecaire_can_open_the_queue_and_examination_form(): void
     {
-        $bibliothecaire = User::factory()->create(['role' => 'bibliothecaire']);
+        $bibliothecaire = User::factory()->bibliothecaire()->create();
         $memoire = $this->createMemoire();
 
         $this->actingAs($bibliothecaire)
@@ -33,7 +33,7 @@ class ValidationWorkflowTest extends TestCase
 
     public function test_bibliothecaire_can_record_a_decision_with_required_reason(): void
     {
-        $bibliothecaire = User::factory()->create(['role' => 'bibliothecaire']);
+        $bibliothecaire = User::factory()->bibliothecaire()->create();
         $memoire = $this->createMemoire();
 
         $this->actingAs($bibliothecaire)
@@ -73,7 +73,7 @@ class ValidationWorkflowTest extends TestCase
 
     public function test_students_cannot_access_the_validation_queue(): void
     {
-        $student = User::factory()->create(['role' => 'etudiant']);
+        $student = User::factory()->create();
 
         $this->actingAs($student)
             ->get(route('validations.index'))

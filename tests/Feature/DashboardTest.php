@@ -18,7 +18,7 @@ class DashboardTest extends TestCase
 
     public function test_admin_sees_the_admin_dashboard(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->admin()->create();
 
         $this->actingAs($admin)
             ->get('/dashboard')
@@ -29,7 +29,7 @@ class DashboardTest extends TestCase
 
     public function test_bibliothecaire_sees_the_library_dashboard(): void
     {
-        $biblio = User::factory()->create(['role' => 'bibliothecaire']);
+        $biblio = User::factory()->bibliothecaire()->create();
 
         $this->actingAs($biblio)
             ->get('/dashboard')
@@ -54,7 +54,7 @@ class DashboardTest extends TestCase
 
     public function test_authenticated_user_is_redirected_from_root_to_dashboard(): void
     {
-        $user = User::factory()->create(['role' => 'etudiant']);
+        $user = User::factory()->create(['matricule' => '20240003']);
 
         $this->actingAs($user)
             ->get('/')

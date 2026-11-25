@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
+            <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-eneam-700">Bibliothèque</p>
             <h1 class="text-base font-semibold text-slate-900">File de validation</h1>
             <p class="text-xs text-slate-500">Contrôlez la conformité des mémoires soumis.</p>
         </div>
@@ -13,7 +14,7 @@
             <x-stat-card label="Rejetés ce mois" :value="$rejetesCeMois" hint="Avec motif communiqué" icon="book" tone="rose" />
         </section>
 
-        <section class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+        <section class="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200/70">
             <div class="border-b border-slate-100 px-5 py-4">
                 <h2 class="text-sm font-semibold text-slate-900">Mémoires à contrôler</h2>
                 <p class="text-xs text-slate-500">Les dépôts les plus anciens apparaissent en premier.</p>
@@ -54,7 +55,7 @@
                                     <td class="px-5 py-3"><x-status-badge :statut="$memoire->statut" /></td>
                                     <td class="px-5 py-3 text-right">
                                         <a href="{{ route('validations.show', $memoire) }}"
-                                           class="inline-flex rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100">
+                                           class="inline-flex rounded-lg bg-eneam-50 px-3 py-1.5 text-xs font-semibold text-eneam-700 hover:bg-eneam-100">
                                             Examiner
                                         </a>
                                     </td>

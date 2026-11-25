@@ -24,7 +24,7 @@
     </form>
 
     <p class="mt-6 text-center text-sm text-slate-600">
-        <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+        <a href="{{ route('login') }}" class="font-medium text-eneam-600 hover:text-eneam-500">
             Retour à la connexion
         </a>
     </p>

@@ -14,7 +14,7 @@ class AnneeAcademiqueManagementTest extends TestCase
 
     public function test_admin_can_open_academic_year_management(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->admin()->create();
 
         $this->actingAs($admin)
             ->get(route('annees.index'))
@@ -25,7 +25,7 @@ class AnneeAcademiqueManagementTest extends TestCase
 
     public function test_invalid_date_range_is_rejected(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->admin()->create();
 
         $this->actingAs($admin)
             ->post(route('annees.store'), [
@@ -38,7 +38,7 @@ class AnneeAcademiqueManagementTest extends TestCase
 
     public function test_first_academic_year_is_made_active_automatically(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->admin()->create();
 
         $this->actingAs($admin)
             ->post(route('annees.store'), [
@@ -56,7 +56,7 @@ class AnneeAcademiqueManagementTest extends TestCase
 
     public function test_activating_an_academic_year_deactivates_the_previous_one(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->admin()->create();
         AnneeAcademique::create([
             'libelle' => '2025-2026',
             'date_debut' => '2025-10-01',

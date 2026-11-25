@@ -13,7 +13,6 @@ class MatriculeLoginTest extends TestCase
     public function test_student_can_log_in_with_matricule(): void
     {
         $etudiant = User::factory()->create([
-            'role' => 'etudiant',
             'matricule' => '20240001',
         ]);
 
@@ -28,8 +27,7 @@ class MatriculeLoginTest extends TestCase
 
     public function test_staff_can_still_log_in_with_email(): void
     {
-        $admin = User::factory()->create([
-            'role' => 'admin',
+        $admin = User::factory()->admin()->create([
             'email' => 'admin@eneam.bj',
         ]);
 
