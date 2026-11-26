@@ -6,8 +6,7 @@
                 <div>
                     <h1 class="text-3xl font-semibold tracking-tight text-slate-900">Mémoires de soutenance</h1>
                     <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
-                        Consultez les notices et les pages de garde. Le texte intégral est accessible
-                        aux étudiants ENEAM authentifiés, selon les règles de confidentialité.
+                        Parcourez les travaux de fin d’études et recherchez par titre, auteur, filière ou année.
                     </p>
                 </div>
                 <p class="rounded-full bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
@@ -86,22 +85,4 @@
         @endif
     </section>
 
-    @guest
-        <section class="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-            <div class="flex flex-col items-start justify-between gap-4 rounded-2xl bg-eneam-900 px-6 py-6 text-white sm:flex-row sm:items-center">
-                <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-eneam-200">Étudiants ENEAM</p>
-                    <p class="mt-1 text-sm font-semibold">Connectez-vous pour accéder au texte intégral des mémoires.</p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('login') }}" class="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-eneam-900 transition hover:bg-eneam-50">
-                        Se connecter
-                    </a>
-                    <a href="{{ route('activation.create') }}" class="rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/20 transition hover:bg-white/15">
-                        Première connexion
-                    </a>
-                </div>
-            </div>
-        </section>
-    @endguest
 </x-public-layout>

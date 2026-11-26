@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\AnneeAcademique;
 use App\Models\Filiere;
+use App\Models\HistoriqueLecture;
 use App\Models\Memoire;
 use App\Models\User;
 use App\Models\Validation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -34,13 +36,36 @@ class DashboardController extends Controller
             ->get();
 
         $repartition = $this->repartitionParStatut();
+        $nbMemoires = Memoire::count();
+        $nbValides = (int) ($repartition['valide'] ?? 0);
+
+        // Usage réel du fonds : lectures et téléchargements journalisés.
+        $nbConsultations = HistoriqueLecture::count();
+        $nbTelechargements = HistoriqueLecture::where('type', 'telechargement')->count();
+
+        $topConsultes = HistoriqueLecture::query()
+            ->select('memoire_id', DB::raw('COUNT(*) as total'))
+            ->with('memoire:id,titre,filiere_id')
+            ->groupBy('memoire_id')
+            ->orderByDesc('total')
+            ->limit(4)
+            ->get();
+
+        $tailleStockage = Memoire::whereNotNull('fichier_pdf')
+            ->pluck('fichier_pdf')
+            ->sum(function (string $chemin): int {
+                $disque = Storage::disk('local');
+
+                return $disque->exists($chemin) ? $disque->size($chemin) : 0;
+            });
 
         return view('dashboard.admin', [
+            'anneeCourante' => AnneeAcademique::where('active', true)->value('libelle'),
             'nbFilieres' => Filiere::count(),
             'nbAnnees' => AnneeAcademique::count(),
-            'nbMemoires' => Memoire::count(),
+            'nbMemoires' => $nbMemoires,
             'nbEnAttente' => (int) (($repartition['soumis'] ?? 0) + ($repartition['en_verification'] ?? 0)),
-            'nbValides' => (int) ($repartition['valide'] ?? 0),
+            'nbValides' => $nbValides,
             'nbACorriger' => (int) ($repartition['a_corriger'] ?? 0),
             'nbUtilisateurs' => User::where('actif', true)->count(),
             'nbEtudiants' => User::where('role', 'etudiant')->where('actif', true)->count(),
@@ -48,6 +73,11 @@ class DashboardController extends Controller
             'dernieres' => $dernieres,
             'activites' => $this->activitesRecentes(),
             'parFiliere' => Filiere::withCount('memoires')->orderByDesc('memoires_count')->take(5)->get(),
+            'tauxValidation' => $nbMemoires > 0 ? (int) round($nbValides * 100 / $nbMemoires) : 0,
+            'nbConsultations' => $nbConsultations,
+            'nbTelechargements' => $nbTelechargements,
+            'topConsultes' => $topConsultes,
+            'tailleStockage' => $tailleStockage,
         ]);
     }
 
@@ -61,6 +91,15 @@ class DashboardController extends Controller
 
         $repartition = $this->repartitionParStatut();
 
+        $plusAncien = Memoire::whereIn('statut', ['soumis', 'en_verification'])->min('date_depot');
+        $joursFile = $plusAncien !== null
+            ? max(0, (int) \Illuminate\Support\Carbon::parse($plusAncien)->diffInDays(now()))
+            : null;
+
+        $decisionsSemaine = Validation::whereNotNull('date_decision')
+            ->where('date_decision', '>=', now()->subDays(7))
+            ->count();
+
         return view('dashboard.bibliothecaire', [
             'nbTotal' => Memoire::count(),
             'nbEnAttente' => Memoire::whereIn('statut', ['soumis', 'en_verification'])->count(),
@@ -71,12 +110,36 @@ class DashboardController extends Controller
             'repartition' => $repartition,
             'file' => $file,
             'activites' => $this->activitesRecentes(),
+            'joursFile' => $joursFile,
+            'decisionsSemaine' => $decisionsSemaine,
         ]);
     }
 
     private function tableauDeBordEtudiant(User $utilisateur): View
     {
         $requete = Memoire::where('etudiant_id', $utilisateur->id);
+
+        $consultations = HistoriqueLecture::with(['memoire.filiere'])
+            ->where('user_id', $utilisateur->id)
+            ->whereHas('memoire')
+            ->orderByDesc('created_at')
+            ->limit(4)
+            ->get();
+
+        $dejaConsultes = $consultations->pluck('memoire_id');
+
+        // Suggestions : derniers mémoires validés que l'étudiant n'a pas encore ouverts.
+        $suggestions = Memoire::query()
+            ->visiblesPour($utilisateur)
+            ->with(['filiere', 'annee'])
+            ->where('statut', 'valide')
+            ->where(function ($q) use ($utilisateur): void {
+                $q->whereNull('etudiant_id')->orWhere('etudiant_id', '!=', $utilisateur->id);
+            })
+            ->when($dejaConsultes->isNotEmpty(), fn ($q) => $q->whereNotIn('id', $dejaConsultes))
+            ->orderByDesc('date_depot')
+            ->limit(3)
+            ->get();
 
         return view('dashboard.etudiant', [
             'nbDepots' => (clone $requete)->count(),
@@ -88,6 +151,8 @@ class DashboardController extends Controller
                 ->orderByDesc('date_depot')
                 ->limit(5)
                 ->get(),
+            'suggestions' => $suggestions,
+            'consultations' => $consultations,
         ]);
     }
 

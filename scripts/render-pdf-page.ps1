@@ -30,6 +30,7 @@ function AwaitAction($WinRtAction) {
 
 [Windows.Storage.StorageFile, Windows.Storage, ContentType = WindowsRuntime] | Out-Null
 [Windows.Data.Pdf.PdfDocument, Windows.Data.Pdf, ContentType = WindowsRuntime] | Out-Null
+[Windows.Data.Pdf.PdfPageRenderOptions, Windows.Data.Pdf, ContentType = WindowsRuntime] | Out-Null
 [Windows.Storage.Streams.InMemoryRandomAccessStream, Windows.Storage.Streams, ContentType = WindowsRuntime] | Out-Null
 
 $file = Await ([Windows.Storage.StorageFile]::GetFileFromPathAsync($Path)) ([Windows.Storage.StorageFile])
@@ -42,7 +43,12 @@ if ($PageIndex -ge $document.PageCount) {
 $page = $document.GetPage([uint32]$PageIndex)
 $stream = [Windows.Storage.Streams.InMemoryRandomAccessStream]::new()
 
-AwaitAction ($page.RenderToStreamAsync($stream))
+# Rendu plafonné à 800 px de large : largement suffisant pour l'aperçu et la
+# fiche mémoire, tout en gardant des images légères à charger.
+$options = [Windows.Data.Pdf.PdfPageRenderOptions]::new()
+$options.DestinationWidth = 800
+
+AwaitAction ($page.RenderToStreamAsync($stream, $options))
 
 $reader = [Windows.Storage.Streams.DataReader]::new($stream.GetInputStreamAt(0))
 Await ($reader.LoadAsync([uint32]$stream.Size)) ([uint32]) | Out-Null

@@ -21,6 +21,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/catalogue/{memoire}/telecharger', [MemoireController::class, 'telecharger'])->name('catalogue.telecharger');
 });
 
+Route::middleware(['auth', 'role:etudiant'])->group(function () {
+    Route::get('/mes-memoires', [MemoireController::class, 'miennes'])->name('memoires.miennes');
+    Route::get('/deposer-un-memoire', [MemoireController::class, 'creer'])->name('memoires.create');
+    Route::post('/deposer-un-memoire', [MemoireController::class, 'stocker'])->name('memoires.store');
+    Route::post('/mes-memoires/{memoire}/resoumettre', [MemoireController::class, 'resoumettre'])->name('memoires.resoumettre');
+});
+
+Route::middleware(['auth', 'role:admin,bibliothecaire'])->group(function () {
+    Route::get('/gestion/memoires', [MemoireController::class, 'gestion'])->name('memoires.index');
+});
+
 Route::get('/catalogue/{memoire}', [MemoireController::class, 'show'])->name('catalogue.show');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])

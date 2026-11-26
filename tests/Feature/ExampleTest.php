@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Database\Seeders\FiliereSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,7 +18,17 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk();
-        $response->assertSee('Explorer le catalogue');
+        $response->assertSee('Comprendre les accès');
+        $response->assertSee('Activer mon compte');
         $response->assertSee('Se connecter');
+    }
+
+    public function test_homepage_counts_all_program_filieres_not_only_filieres_with_memoires(): void
+    {
+        $this->seed(FiliereSeeder::class);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSeeInOrder(['14', 'Filières au programme']);
     }
 }

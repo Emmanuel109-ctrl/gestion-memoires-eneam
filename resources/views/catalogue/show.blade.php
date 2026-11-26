@@ -21,9 +21,9 @@
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div class="grid gap-8 lg:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr]">
+        <div class="grid gap-8 lg:grid-cols-[180px_1fr] xl:grid-cols-[200px_1fr]">
             {{-- Page de garde --}}
-            <div class="mx-auto w-full max-w-[240px] lg:max-w-none">
+            <div class="mx-auto w-full max-w-[200px] lg:max-w-none">
                 <div class="overflow-hidden rounded-2xl bg-white p-2 shadow-soft ring-1 ring-slate-200/70">
                     <div class="overflow-hidden rounded-xl bg-slate-100">
                         <img src="{{ route('catalogue.couverture', $memoire) }}"
