@@ -33,7 +33,7 @@
                 @else
                     <span class="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-xs font-medium text-eneam-50 ring-1 ring-white/20">
                         <x-nav-icon name="upload" class="h-4 w-4" />
-                        Dépôt disponible au lot 2
+                        Dépôt en ligne bientôt disponible
                     </span>
                 @endif
             </div>
@@ -47,7 +47,7 @@
             <x-stat-card label="Rejetés" :value="$nbRejetes" hint="Non retenus" icon="book" tone="slate" />
         </section>
 
-        <div class="grid gap-6 xl:grid-cols-3">
+        <div class="grid gap-6 xl:grid-cols-3 xl:items-start">
             <section class="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200/70 xl:col-span-2">
                 <div class="border-b border-slate-100 px-5 py-4">
                     <h2 class="text-sm font-semibold text-slate-900">Mes derniers dépôts</h2>
@@ -55,9 +55,25 @@
                 </div>
 
                 @if ($derniers->isEmpty())
-                    <div class="px-5 py-12 text-center">
-                        <p class="text-sm font-medium text-slate-700">Vous n'avez encore déposé aucun mémoire</p>
-                        <p class="mt-1 text-xs text-slate-500">Le formulaire de dépôt sera disponible très bientôt.</p>
+                    <div class="flex flex-col items-center justify-center px-6 py-14 text-center">
+                        <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-eneam-50 text-eneam-700 ring-1 ring-eneam-100">
+                            <x-nav-icon name="upload" class="h-6 w-6" />
+                        </span>
+                        <p class="mt-4 text-sm font-semibold text-slate-800">Votre premier dépôt commence ici</p>
+                        <p class="mt-1 max-w-sm text-xs leading-relaxed text-slate-500">
+                            Déposez votre mémoire en PDF pour le transmettre à la bibliothèque, puis suivez ici
+                            sa vérification et les éventuelles corrections demandées.
+                        </p>
+                        <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
+                            <a href="{{ route('catalogue.index') }}"
+                               class="inline-flex items-center gap-2 rounded-xl bg-eneam-800 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-eneam-900">
+                                Explorer le catalogue
+                            </a>
+                            <a href="#etapes-depot"
+                               class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">
+                                Comprendre le circuit
+                            </a>
+                        </div>
                     </div>
                 @else
                     <div class="overflow-x-auto">
@@ -78,7 +94,7 @@
                                             <p class="max-w-sm truncate font-medium text-slate-800">{{ $memoire->titre }}</p>
                                             <p class="text-xs text-slate-500">{{ $memoire->type_diplome ?? 'Mémoire' }}</p>
                                         </td>
-                                        <td class="px-5 py-3 text-slate-600">{{ $memoire->filiere?->code ?? '—' }}</td>
+                                        <td class="px-5 py-3 text-slate-600">{{ $memoire->filiere?->nom ?? '—' }}</td>
                                         <td class="px-5 py-3 text-slate-600">{{ $memoire->annee?->libelle ?? '—' }}</td>
                                         <td class="px-5 py-3"><x-status-badge :statut="$memoire->statut" /></td>
                                         <td class="whitespace-nowrap px-5 py-3 text-slate-600">
@@ -103,11 +119,11 @@
                     </div>
 
                     <p class="mt-3 text-[11px] leading-relaxed text-slate-500">
-                        Déclaré à l'inscription, il sera vérifié par la bibliothèque. Un matricule erroné peut bloquer la validation de vos dépôts.
+                        Issu de l'annuaire ENEAM, il sera vérifié par la bibliothèque. Un matricule erroné peut bloquer la validation de vos dépôts.
                     </p>
                 </section>
 
-                <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
+                <section id="etapes-depot" class="scroll-mt-24 rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
                     <h2 class="text-sm font-semibold text-slate-900">Les étapes d'un dépôt</h2>
                     <ol class="mt-4 space-y-3 text-xs text-slate-600">
                         <li class="flex gap-3">
@@ -127,6 +143,71 @@
                             <span><strong class="font-semibold text-slate-800">Validation</strong> puis publication au catalogue.</span>
                         </li>
                     </ol>
+                </section>
+            </aside>
+        </div>
+
+        <div class="grid gap-6 xl:grid-cols-3">
+            <section class="xl:col-span-2">
+                <div class="flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-900">À découvrir dans le catalogue</h2>
+                        <p class="text-xs text-slate-500">Les derniers mémoires validés qui peuvent vous intéresser.</p>
+                    </div>
+                    <a href="{{ route('catalogue.index') }}" class="eneam-link text-xs">Parcourir tout le catalogue →</a>
+                </div>
+
+                @if ($suggestions->isEmpty())
+                    <div class="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center">
+                        <p class="text-sm font-medium text-slate-700">Aucune nouvelle suggestion pour le moment</p>
+                        <p class="mt-1 text-xs text-slate-500">Explorez le catalogue pour trouver d'autres mémoires.</p>
+                    </div>
+                @else
+                    <div class="mt-4 grid gap-3">
+                        @foreach ($suggestions as $suggestion)
+                            @include('catalogue.partials.carte-compacte', ['memoire' => $suggestion])
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+
+            <aside class="space-y-4">
+                <section class="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200/70">
+                    <div class="border-b border-slate-100 px-5 py-4">
+                        <h2 class="text-sm font-semibold text-slate-900">Mes dernières consultations</h2>
+                        <p class="text-xs text-slate-500">Vos accès récents au texte intégral</p>
+                    </div>
+
+                    @if ($consultations->isEmpty())
+                        <div class="px-5 py-8 text-center">
+                            <p class="text-xs leading-relaxed text-slate-500">
+                                Vous n'avez encore consulté aucun mémoire.
+                                Vos lectures apparaîtront ici.
+                            </p>
+                        </div>
+                    @else
+                        <ul class="divide-y divide-slate-100">
+                            @foreach ($consultations as $consultation)
+                                @if ($consultation->memoire)
+                                    <li>
+                                        <a href="{{ route('catalogue.show', $consultation->memoire) }}"
+                                           class="flex items-start gap-3 px-5 py-3 transition hover:bg-slate-50/70">
+                                            <span class="mt-0.5 inline-flex shrink-0 rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] {{ $consultation->type === 'telechargement' ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700' }}">
+                                                {{ $consultation->type === 'telechargement' ? 'PDF' : 'Lu' }}
+                                            </span>
+                                            <span class="min-w-0">
+                                                <span class="line-clamp-2 block text-xs font-medium text-slate-800">{{ $consultation->memoire->titre }}</span>
+                                                <span class="mt-0.5 block text-[11px] text-slate-500">
+                                                    {{ $consultation->memoire->filiere?->nom ?? '—' }}
+                                                    · {{ $consultation->created_at?->diffForHumans() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    @endif
                 </section>
             </aside>
         </div>

@@ -19,39 +19,36 @@
                     de confidentialité et d'embargo.
                 </p>
 
-                <form method="GET" action="{{ route('catalogue.index') }}" class="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <label for="q" class="sr-only">Rechercher un mémoire</label>
-                    <div class="relative flex-1">
-                        <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" />
+                <div class="mt-8 flex flex-wrap items-center gap-3">
+                    <a href="#regles-acces"
+                       class="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-eneam-900 shadow-lg shadow-eneam-950/20 transition hover:bg-eneam-50">
+                        Comprendre les accès
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m0 0 6-6m-6 6-6-6" />
                         </svg>
-                        <input id="q" name="q" type="search"
-                               placeholder="Titre, auteur, mot-clé…"
-                               class="w-full rounded-xl border-0 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-lg shadow-eneam-950/20 placeholder:text-slate-400 focus:ring-2 focus:ring-white">
-                    </div>
-                    <button type="submit"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-eneam-900 shadow-lg shadow-eneam-950/20 transition hover:bg-eneam-50">
-                        Rechercher
-                    </button>
-                </form>
+                    </a>
 
-                <div class="mt-4 flex flex-wrap items-center gap-2">
                     @guest
                         <a href="{{ route('activation.create') }}"
-                           class="inline-flex items-center rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/20">
-                            Première connexion étudiante
-                        </a>
-                        <a href="{{ route('login') }}"
-                           class="inline-flex items-center rounded-lg px-3 py-2 text-xs font-semibold text-eneam-100 transition hover:bg-white/10 hover:text-white">
-                            Déjà un compte ? Se connecter
+                           class="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                            Activer mon compte
                         </a>
                     @else
                         <a href="{{ route('dashboard') }}"
-                           class="inline-flex items-center rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/20">
+                           class="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
                             Mon espace
                         </a>
                     @endguest
                 </div>
+
+                @guest
+                    <p class="mt-4 text-xs text-eneam-100/80">
+                        Déjà activé ?
+                        <a href="{{ route('login') }}" class="font-semibold text-white underline-offset-4 hover:underline">
+                            Se connecter
+                        </a>
+                    </p>
+                @endguest
             </div>
 
             <div class="relative hidden items-center lg:flex">
@@ -62,65 +59,38 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 8h8M8 11.5h8M8 15h4" />
                         </svg>
                     </div>
-                    <p class="mt-6 text-[10px] font-semibold uppercase tracking-[0.2em] text-eneam-200">Bibliothèque numérique ENEAM</p>
+                    <p class="mt-6 text-[10px] font-semibold uppercase tracking-[0.2em] text-eneam-200">Le fonds en chiffres</p>
                     <h2 class="mt-2 text-2xl font-semibold leading-snug text-white">
-                        Un accès simple, pensé pour chaque lecteur.
+                        Un patrimoine qui s'enrichit à chaque promotion.
                     </h2>
                     <p class="mt-3 text-sm leading-relaxed text-eneam-100/90">
-                        Repérez les travaux universitaires et consultez-les dans le respect des règles de diffusion.
+                        Notices validées, filières de formation et auteurs référencés :
+                        l'état du fonds documentaire en un coup d'œil.
                     </p>
 
-                    <div class="mt-7 space-y-3">
-                        <div class="flex items-start gap-3 rounded-xl bg-white/10 p-3.5 ring-1 ring-white/10">
-                            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-300/15 text-emerald-200">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m5 12.75 4.5 4.5L19 7.5" />
-                                </svg>
-                            </span>
-                            <span>
-                                <span class="block text-sm font-semibold text-white">Notices accessibles à tous</span>
-                                <span class="mt-0.5 block text-xs text-eneam-100/80">Recherche, résumé et informations académiques.</span>
-                            </span>
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <div class="rounded-xl bg-white/10 p-4 ring-1 ring-white/10">
+                            <p class="text-3xl font-semibold tracking-tight text-white">{{ $nbMemoires }}</p>
+                            <p class="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-eneam-100/80">Mémoires consultables</p>
                         </div>
-                        <div class="flex items-start gap-3 rounded-xl bg-white/10 p-3.5 ring-1 ring-white/10">
-                            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-300/15 text-sky-200">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 10.5V7.75a3.75 3.75 0 1 1 7.5 0v2.75m-9 0h10.5A1.5 1.5 0 0 1 18.75 12v7.5A1.5 1.5 0 0 1 17.25 21H6.75a1.5 1.5 0 0 1-1.5-1.5V12a1.5 1.5 0 0 1 1.5-1.5Z" />
-                                </svg>
-                            </span>
-                            <span>
-                                <span class="block text-sm font-semibold text-white">Textes intégraux protégés</span>
-                                <span class="mt-0.5 block text-xs text-eneam-100/80">Accès selon votre profil et les règles de confidentialité.</span>
-                            </span>
+                        <div class="rounded-xl bg-white/10 p-4 ring-1 ring-white/10">
+                            <p class="text-3xl font-semibold tracking-tight text-white">{{ $nbFilieres }}</p>
+                            <p class="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-eneam-100/80">Filières au programme</p>
+                        </div>
+                        <div class="rounded-xl bg-white/10 p-4 ring-1 ring-white/10">
+                            <p class="text-3xl font-semibold tracking-tight text-white">{{ $nbAnnees }}</p>
+                            <p class="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-eneam-100/80">Promotions couvertes</p>
+                        </div>
+                        <div class="rounded-xl bg-white/10 p-4 ring-1 ring-white/10">
+                            <p class="text-3xl font-semibold tracking-tight text-white">{{ $nbAuteurs }}</p>
+                            <p class="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-eneam-100/80">Auteurs référencés</p>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    {{-- Chiffres clés --}}
-    <section class="mx-auto -mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="grid gap-3 rounded-2xl bg-white p-4 shadow-soft ring-1 ring-slate-200/70 sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
-            <div class="rounded-xl bg-slate-50 px-4 py-4 ring-1 ring-slate-100">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Mémoires consultables</p>
-                <p class="mt-2 text-3xl font-semibold tracking-tight text-eneam-900">{{ $nbMemoires }}</p>
-                <p class="mt-1 text-xs text-slate-500">Notices validées</p>
-            </div>
-            <div class="rounded-xl bg-slate-50 px-4 py-4 ring-1 ring-slate-100">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Filières représentées</p>
-                <p class="mt-2 text-3xl font-semibold tracking-tight text-eneam-900">{{ $nbFilieres }}</p>
-                <p class="mt-1 text-xs text-slate-500">Filières ENEAM</p>
-            </div>
-            <div class="rounded-xl bg-slate-50 px-4 py-4 ring-1 ring-slate-100">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Promotions</p>
-                <p class="mt-2 text-3xl font-semibold tracking-tight text-eneam-900">{{ $nbAnnees }}</p>
-                <p class="mt-1 text-xs text-slate-500">Années académiques</p>
-            </div>
-            <div class="rounded-xl bg-slate-50 px-4 py-4 ring-1 ring-slate-100">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Auteurs référencés</p>
-                <p class="mt-2 text-3xl font-semibold tracking-tight text-eneam-900">{{ $nbAuteurs }}</p>
-                <p class="mt-1 text-xs text-slate-500">Auteurs de mémoires</p>
+                    <p class="mt-4 text-[11px] leading-relaxed text-eneam-100/70">
+                        Les mémoires et les auteurs reflètent les notices visibles. Les filières correspondent au référentiel ENEAM.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -142,16 +112,16 @@
                 <p class="mt-1 text-xs text-slate-500">Les premiers mémoires apparaîtront ici après validation.</p>
             </div>
         @else
-            <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-8 grid gap-3 lg:grid-cols-2">
                 @foreach ($recents as $memoire)
-                    @include('catalogue.partials.carte', ['memoire' => $memoire])
+                    @include('catalogue.partials.carte-compacte', ['memoire' => $memoire])
                 @endforeach
             </div>
         @endif
     </section>
 
     {{-- Règles d'accès --}}
-    <section class="border-y border-slate-200 bg-white">
+    <section id="regles-acces" class="scroll-mt-20 border-y border-slate-200 bg-white">
         <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
                 <p class="eneam-eyebrow">Règles d'accès</p>

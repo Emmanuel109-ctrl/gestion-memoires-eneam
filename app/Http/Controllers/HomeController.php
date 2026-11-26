@@ -27,12 +27,21 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
+        $auteurs = (clone $base)
+            ->whereNotNull('auteur_nom')
+            ->pluck('auteur_nom')
+            ->flatMap(fn (string $noms) => preg_split('/\s+et\s+/u', $noms) ?: [])
+            ->map(fn (string $nom) => trim($nom))
+            ->filter()
+            ->unique()
+            ->count();
+
         return view('accueil', [
             'recents' => $recents,
             'nbMemoires' => (clone $base)->count(),
-            'nbFilieres' => (clone $base)->distinct()->count('filiere_id'),
+            'nbFilieres' => Filiere::count(),
             'nbAnnees' => (clone $base)->distinct()->count('annee_id'),
-            'nbAuteurs' => (clone $base)->whereNotNull('auteur_nom')->distinct()->count('auteur_nom'),
+            'nbAuteurs' => $auteurs,
             'filieres' => Filiere::orderBy('nom')->get(),
             'dernieresAnnees' => AnneeAcademique::orderByDesc('date_debut')->limit(4)->get(),
         ]);

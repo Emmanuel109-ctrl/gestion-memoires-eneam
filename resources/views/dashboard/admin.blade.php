@@ -11,7 +11,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
             <p class="text-sm text-slate-500">
                 Année académique en cours :
-                <span class="font-semibold text-slate-800">{{ $anneeCourante ?? '2026-2027' }}</span>
+                <span class="font-semibold text-slate-800">{{ $anneeCourante ?? 'Aucune année active' }}</span>
             </p>
             <div class="flex flex-wrap gap-2">
                 @if (Route::has('memoires.index'))
@@ -142,6 +142,90 @@
             </section>
         </div>
 
+        {{-- Usage du fonds : ce que le tableau de bord ne montre pas ailleurs. --}}
+        <div class="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
+                <h2 class="text-sm font-semibold text-slate-900">Qualité du fonds</h2>
+                <p class="mt-1 text-xs text-slate-500">Part des notices validées et poids des fichiers</p>
+
+                <div class="mt-5 flex items-center gap-5">
+                    <div class="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-full"
+                         style="background: conic-gradient(#059669 {{ $tauxValidation * 3.6 }}deg, #e2e8f0 0deg);">
+                        <div class="flex h-[74px] w-[74px] flex-col items-center justify-center rounded-full bg-white">
+                            <span class="text-xl font-semibold text-slate-900">{{ $tauxValidation }} %</span>
+                            <span class="text-[9px] font-semibold uppercase tracking-[0.1em] text-slate-400">validé</span>
+                        </div>
+                    </div>
+                    <dl class="min-w-0 flex-1 space-y-2.5 text-xs">
+                        <div class="flex items-center justify-between gap-2">
+                            <dt class="text-slate-500">Consultations</dt>
+                            <dd class="font-semibold text-slate-900">{{ number_format($nbConsultations, 0, ',', ' ') }}</dd>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <dt class="text-slate-500">Téléchargements</dt>
+                            <dd class="font-semibold text-slate-900">{{ number_format($nbTelechargements, 0, ',', ' ') }}</dd>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <dt class="text-slate-500">Stockage PDF</dt>
+                            <dd class="font-semibold text-slate-900">
+                                {{ $tailleStockage > 0 ? number_format($tailleStockage / 1048576, 1, ',', ' ') . ' Mo' : '—' }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <p class="mt-5 rounded-xl bg-slate-50 px-3 py-2.5 text-[11px] leading-relaxed text-slate-500 ring-1 ring-slate-100">
+                    Les consultations sont journalisées à chaque ouverture du texte intégral.
+                    Ce suivi permet de mesurer l'usage réel du fonds, pas seulement son volume.
+                </p>
+            </section>
+
+            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-900">Mémoires les plus consultés</h2>
+                        <p class="mt-1 text-xs text-slate-500">Classement par nombre d'accès au texte intégral</p>
+                    </div>
+                    @if (Route::has('memoires.index'))
+                        <a href="{{ route('memoires.index') }}" class="text-xs font-semibold text-eneam-700 hover:text-eneam-900">Voir tout →</a>
+                    @endif
+                </div>
+
+                @php
+                    $maxConsultations = max(1, (int) ($topConsultes->max('total') ?? 1));
+                @endphp
+
+                @if ($topConsultes->isEmpty())
+                    <div class="py-10 text-center">
+                        <p class="text-sm font-medium text-slate-700">Aucune consultation enregistrée</p>
+                        <p class="mt-1 text-xs text-slate-500">Le classement se remplira dès les premières lectures authentifiées.</p>
+                    </div>
+                @else
+                    <ol class="mt-4 space-y-3">
+                        @foreach ($topConsultes as $index => $ligne)
+                            <li class="flex items-center gap-3">
+                                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-eneam-50 text-[10px] font-bold text-eneam-800">
+                                    {{ $index + 1 }}
+                                </span>
+                                <div class="min-w-0 flex-1">
+                                    <p class="truncate text-xs font-medium text-slate-800">
+                                        {{ $ligne->memoire?->titre ?? 'Mémoire supprimé' }}
+                                    </p>
+                                    <div class="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                                        <div class="h-full rounded-full bg-eneam-600"
+                                             style="width: {{ round($ligne->total * 100 / $maxConsultations) }}%"></div>
+                                    </div>
+                                </div>
+                                <span class="shrink-0 text-[11px] font-semibold text-slate-500">
+                                    {{ $ligne->total }} accès
+                                </span>
+                            </li>
+                        @endforeach
+                    </ol>
+                @endif
+            </section>
+        </div>
+
         <section class="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200/70">
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
                 <div>
@@ -179,7 +263,7 @@
                                             {{ $memoire->etudiant?->name ?? $memoire->auteur_nom ?? 'Auteur non renseigné' }}
                                         </p>
                                     </td>
-                                    <td class="px-5 py-3 text-slate-600">{{ $memoire->filiere?->code ?? '—' }}</td>
+                                    <td class="px-5 py-3 text-slate-600">{{ $memoire->filiere?->nom ?? '—' }}</td>
                                     <td class="px-5 py-3 text-slate-600">{{ $memoire->annee?->libelle ?? '—' }}</td>
                                     <td class="px-5 py-3"><x-status-badge :statut="$memoire->statut" /></td>
                                     <td class="whitespace-nowrap px-5 py-3 text-slate-600">

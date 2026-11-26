@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class ImporterEtudiantsEneam extends Command
 {
     protected $signature = 'eneam:importer-etudiants
-                            {fichier? : Chemin du fichier CSV (par défaut database/data/etudiants_eneam.csv)}
+                            {fichier? : Chemin du fichier CSV (par défaut le CSV d’annuaire présent dans database/data)}
                             {--source= : Libellé de la source (ex. scolarite-2026)}
                             {--dry-run : Simuler sans écrire en base}';
 
@@ -23,8 +23,7 @@ class ImporterEtudiantsEneam extends Command
 
     public function handle(): int
     {
-        $fichier = $this->argument('fichier')
-            ?? database_path('data/etudiants_eneam.csv');
+        $fichier = $this->argument('fichier') ?? $this->fichierParDefaut();
 
         if (! is_file($fichier)) {
             $this->components->error("Fichier introuvable : {$fichier}");
@@ -126,6 +125,22 @@ class ImporterEtudiantsEneam extends Command
         }
 
         return $erreurs === [] ? self::SUCCESS : self::FAILURE;
+    }
+
+    private function fichierParDefaut(): string
+    {
+        $fichiers = [
+            database_path('data/etudiants_eneams.csv'),
+            database_path('data/etudiants_eneam.csv'),
+        ];
+
+        foreach ($fichiers as $fichier) {
+            if (is_file($fichier)) {
+                return $fichier;
+            }
+        }
+
+        return $fichiers[1];
     }
 
     /**

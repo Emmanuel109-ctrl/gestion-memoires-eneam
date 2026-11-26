@@ -17,9 +17,40 @@
             <x-stat-card label="Rejetés" :value="$nbRejetes" hint="Non retenus" icon="book" tone="slate" />
         </section>
 
-        <p class="rounded-xl bg-white px-4 py-3 text-xs text-slate-500 shadow-soft ring-1 ring-slate-200/70">
-            <span class="font-semibold text-slate-700">{{ $nbEtudiants }} étudiant(s) actif(s)</span> peuvent déposer un mémoire cette année.
-        </p>
+        {{-- Priorités de traitement --}}
+        <section class="grid gap-3 sm:grid-cols-3">
+            <div class="rounded-xl bg-white px-4 py-3 shadow-soft ring-1 ring-slate-200/70">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Communauté</p>
+                <p class="mt-1 text-sm font-semibold text-slate-800">
+                    {{ $nbEtudiants }} étudiant(s) actif(s)
+                </p>
+                <p class="mt-0.5 text-[11px] text-slate-500">Autorisés à déposer cette année.</p>
+            </div>
+
+            <div class="rounded-xl px-4 py-3 shadow-soft ring-1 {{ $joursFile !== null && $joursFile >= 7 ? 'bg-amber-50 ring-amber-200' : 'bg-white ring-slate-200/70' }}">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.14em] {{ $joursFile !== null && $joursFile >= 7 ? 'text-amber-700' : 'text-slate-400' }}">Ancienneté de la file</p>
+                <p class="mt-1 text-sm font-semibold {{ $joursFile !== null && $joursFile >= 7 ? 'text-amber-900' : 'text-slate-800' }}">
+                    @if ($joursFile === null)
+                        File vide
+                    @elseif ($joursFile === 0)
+                        Dossier du jour
+                    @else
+                        {{ $joursFile }} jour(s) d'attente
+                    @endif
+                </p>
+                <p class="mt-0.5 text-[11px] {{ $joursFile !== null && $joursFile >= 7 ? 'text-amber-700' : 'text-slate-500' }}">
+                    Dépôt en attente le plus ancien.
+                </p>
+            </div>
+
+            <div class="rounded-xl bg-white px-4 py-3 shadow-soft ring-1 ring-slate-200/70">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Activité</p>
+                <p class="mt-1 text-sm font-semibold text-slate-800">
+                    {{ $decisionsSemaine }} décision(s)
+                </p>
+                <p class="mt-0.5 text-[11px] text-slate-500">Validations et rejets sur 7 jours.</p>
+            </div>
+        </section>
 
         <div class="grid gap-6 xl:grid-cols-2">
             {{-- Répartition --}}
@@ -39,6 +70,7 @@
 
                 @php
                     $etats = [
+                        'soumis'          => ['Soumis', 'bg-slate-400'],
                         'en_verification' => ['En vérification', 'bg-amber-400'],
                         'a_corriger'      => ['À corriger', 'bg-orange-400'],
                         'valide'          => ['Validés', 'bg-emerald-500'],
@@ -154,7 +186,7 @@
                                         <p class="text-slate-700">{{ $memoire->etudiant?->name ?? $memoire->auteur_nom ?? '—' }}</p>
                                         <p class="text-xs text-slate-500">{{ $memoire->etudiant?->matricule ?? '' }}</p>
                                     </td>
-                                    <td class="px-5 py-3 text-slate-600">{{ $memoire->filiere?->code ?? '—' }}</td>
+                                    <td class="px-5 py-3 text-slate-600">{{ $memoire->filiere?->nom ?? '—' }}</td>
                                     <td class="px-5 py-3 text-slate-600">{{ $memoire->annee?->libelle ?? '—' }}</td>
                                     <td class="whitespace-nowrap px-5 py-3 text-slate-600">
                                         {{ $memoire->date_depot?->translatedFormat('d/m/Y') ?? '—' }}

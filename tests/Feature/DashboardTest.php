@@ -25,6 +25,10 @@ class DashboardTest extends TestCase
             ->assertOk()
             ->assertSee('Tableau de bord — Administration')
             ->assertSee('Répartition par statut');
+
+        $this->get(route('memoires.index'))
+            ->assertOk()
+            ->assertSee('Gestion des mémoires');
     }
 
     public function test_bibliothecaire_sees_the_library_dashboard(): void
@@ -36,6 +40,8 @@ class DashboardTest extends TestCase
             ->assertOk()
             ->assertSee('Tableau de bord — Bibliothèque')
             ->assertSee('File de vérification');
+
+        $this->get(route('memoires.index'))->assertOk();
     }
 
     public function test_etudiant_sees_his_own_dashboard(): void
@@ -50,6 +56,13 @@ class DashboardTest extends TestCase
             ->assertOk()
             ->assertSee('Mon espace étudiant')
             ->assertSee('20240001');
+
+        $this->get(route('memoires.miennes'))
+            ->assertOk()
+            ->assertSee('Mes mémoires');
+        $this->get(route('memoires.create'))
+            ->assertOk()
+            ->assertSee('Déposer un mémoire');
     }
 
     public function test_authenticated_user_sees_the_public_home_page(): void
