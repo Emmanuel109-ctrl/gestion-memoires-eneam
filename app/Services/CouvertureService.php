@@ -24,7 +24,9 @@ class CouvertureService
         $this->supprimerAncienne($memoire);
 
         if ($pdfAbsolu !== null && is_file($pdfAbsolu)) {
-            $png = storage_path('app/private/couvertures/'.$memoire->id.'.png');
+            // WinRT (rendu Windows) refuse les chemins à séparateurs mixtes.
+            $pdfAbsolu = str_replace('/', DIRECTORY_SEPARATOR, $pdfAbsolu);
+            $png = str_replace('/', DIRECTORY_SEPARATOR, storage_path('app/private/couvertures/'.$memoire->id.'.png'));
 
             if ($this->rendreAvecPdftoppm($pdfAbsolu, $png, $page)
                 || $this->rendreAvecGhostscript($pdfAbsolu, $png, $page)
@@ -47,6 +49,21 @@ class CouvertureService
      */
     public function reponse(Memoire $memoire): \Symfony\Component\HttpFoundation\Response
     {
+        // Couverture manquante (dépôt récent, import partiel) : on la génère
+        // à la première demande plutôt que d'afficher un aperçu générique.
+        if ($memoire->couverture === null) {
+            $pdf = str_replace('/', DIRECTORY_SEPARATOR, Storage::disk('local')->path($memoire->fichier_pdf));
+
+            if (is_file($pdf)) {
+                try {
+                    $this->generer($memoire, $pdf);
+                    $memoire->refresh();
+                } catch (\Throwable) {
+                    //
+                }
+            }
+        }
+
         if ($memoire->couverture !== null) {
             $disque = Storage::disk('local');
 

@@ -7,6 +7,7 @@ use App\Models\Filiere;
 use App\Models\HistoriqueLecture;
 use App\Models\Memoire;
 use App\Models\VersionMemoire;
+use App\Services\CouvertureService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +68,7 @@ class MemoireController extends Controller
         ]);
     }
 
-    public function stocker(Request $request): RedirectResponse
+    public function stocker(Request $request, CouvertureService $couvertures): RedirectResponse
     {
         $donnees = $request->validate([
             'titre' => ['required', 'string', 'max:255'],
@@ -76,7 +77,7 @@ class MemoireController extends Controller
             'type_diplome' => ['required', Rule::in(['Licence', 'DECOGEF'])],
             'filiere_id' => ['required', 'integer', 'exists:filieres,id'],
             'annee_id' => ['required', 'integer', Rule::exists('annees_academiques', 'id')->where('active', true)],
-            'fichier' => ['required', 'file', 'mimes:pdf', 'max:51200'],
+            'fichier' => ['required', 'file', 'mimes:pdf', 'max:40960'],
         ]);
 
         $fichier = $donnees['fichier'];
@@ -95,7 +96,7 @@ class MemoireController extends Controller
             throw new \RuntimeException('Le fichier PDF n’a pas pu être enregistré.');
         }
 
-        DB::transaction(function () use ($donnees, $etudiant, $chemin, $hash): void {
+        $memoire = DB::transaction(function () use ($donnees, $etudiant, $chemin, $hash): Memoire {
             $memoire = Memoire::create([
                 'titre' => $donnees['titre'],
                 'resume' => $donnees['resume'] ?? null,
@@ -117,20 +118,24 @@ class MemoireController extends Controller
                 'fichier_pdf' => $chemin,
                 'numero_version' => 1,
             ]);
+
+            return $memoire;
         });
+
+        $this->genererCouverture($memoire, $couvertures);
 
         return redirect()
             ->route('memoires.miennes')
             ->with('success', 'Votre mémoire a été déposé et ajouté à la file de vérification.');
     }
 
-    public function resoumettre(Request $request, Memoire $memoire): RedirectResponse
+    public function resoumettre(Request $request, Memoire $memoire, CouvertureService $couvertures): RedirectResponse
     {
         abort_unless((int) $memoire->etudiant_id === (int) $request->user()->id, 404);
         abort_unless($memoire->statut === 'a_corriger', 403, 'Ce mémoire ne nécessite pas de correction.');
 
         $donnees = $request->validate([
-            'fichier' => ['required', 'file', 'mimes:pdf', 'max:51200'],
+            'fichier' => ['required', 'file', 'mimes:pdf', 'max:40960'],
         ]);
 
         $fichier = $donnees['fichier'];
@@ -152,7 +157,7 @@ class MemoireController extends Controller
             throw new \RuntimeException('Le fichier PDF corrigé n’a pas pu être enregistré.');
         }
 
-        DB::transaction(function () use ($memoire, $chemin, $hash): void {
+        $memoire = DB::transaction(function () use ($memoire, $chemin, $hash): Memoire {
             $numeroVersion = (int) $memoire->versions()->max('numero_version') + 1;
 
             VersionMemoire::create([
@@ -167,7 +172,11 @@ class MemoireController extends Controller
                 'statut' => 'soumis',
                 'date_depot' => now(),
             ]);
+
+            return $memoire;
         });
+
+        $this->genererCouverture($memoire, $couvertures);
 
         return redirect()
             ->route('memoires.miennes')
@@ -270,6 +279,26 @@ class MemoireController extends Controller
         return response()->download($chemin, $this->nomFichier($memoire), [
             'Content-Type' => 'application/pdf',
         ]);
+    }
+
+    /**
+     * Rend la page de garde dès le dépôt, pour que le catalogue n'affiche
+     * jamais un aperçu vide. Un échec de rendu ne bloque jamais le dépôt :
+     * le service de couverture renvoie alors son visuel de repli.
+     */
+    private function genererCouverture(Memoire $memoire, CouvertureService $couvertures): void
+    {
+        $pdf = Storage::disk('local')->path($memoire->fichier_pdf);
+
+        if (! is_file($pdf)) {
+            return;
+        }
+
+        try {
+            $couvertures->generer($memoire, $pdf);
+        } catch (\Throwable) {
+            //
+        }
     }
 
     private function chemin(Memoire $memoire): string

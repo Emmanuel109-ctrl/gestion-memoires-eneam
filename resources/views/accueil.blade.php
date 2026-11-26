@@ -75,7 +75,7 @@
                         </div>
                         <div class="rounded-xl bg-white/10 p-4 ring-1 ring-white/10">
                             <p class="text-3xl font-semibold tracking-tight text-white">{{ $nbFilieres }}</p>
-                            <p class="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-eneam-100/80">Filières au programme</p>
+                            <p class="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-eneam-100/80">Filières de l'école</p>
                         </div>
                         <div class="rounded-xl bg-white/10 p-4 ring-1 ring-white/10">
                             <p class="text-3xl font-semibold tracking-tight text-white">{{ $nbAnnees }}</p>
@@ -88,7 +88,12 @@
                     </div>
 
                     <p class="mt-4 text-[11px] leading-relaxed text-eneam-100/70">
-                        Les mémoires et les auteurs reflètent les notices visibles. Les filières correspondent au référentiel ENEAM.
+                        Mémoires et auteurs : notices visibles avec votre profil.
+                        @if ($nbFilieresCouvertes >= $nbFilieres)
+                            Les {{ $nbFilieres }} filières de l'école sont représentées dans le fonds.
+                        @else
+                            {{ $nbFilieres }} filières au référentiel, dont {{ $nbFilieresCouvertes }} déjà représentée{{ $nbFilieresCouvertes > 1 ? 's' : '' }} dans les notices visibles.
+                        @endif
                     </p>
                 </div>
             </div>

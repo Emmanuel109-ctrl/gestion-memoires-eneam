@@ -29,6 +29,6 @@ class ExampleTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSeeInOrder(['14', 'Filières au programme']);
+            ->assertSeeInOrder(['14', "Filières de l'école"]);
     }
 }

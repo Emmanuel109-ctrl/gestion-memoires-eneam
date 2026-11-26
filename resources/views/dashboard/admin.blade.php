@@ -31,7 +31,7 @@
             <x-stat-card label="Mémoires" :value="$nbMemoires" hint="Tous statuts confondus" icon="book" tone="eneam" />
             <x-stat-card label="En attente" :value="$nbEnAttente" hint="Soumis ou en vérification" icon="clock" tone="amber" />
             <x-stat-card label="Validés" :value="$nbValides" hint="Publiés au catalogue" icon="check" tone="emerald" />
-            <x-stat-card label="Utilisateurs actifs" :value="$nbUtilisateurs" :hint="$nbEtudiants.' étudiant(s)'" icon="users" tone="slate" />
+            <x-stat-card label="Utilisateurs actifs" :value="$nbUtilisateurs" :hint="$nbEtudiants.' '.($nbEtudiants > 1 ? 'étudiants' : 'étudiant')" icon="users" tone="slate" />
         </section>
 
         <div class="grid gap-6 xl:grid-cols-3">
@@ -144,7 +144,7 @@
 
         {{-- Usage du fonds : ce que le tableau de bord ne montre pas ailleurs. --}}
         <div class="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
+            <section class="min-w-0 rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
                 <h2 class="text-sm font-semibold text-slate-900">Qualité du fonds</h2>
                 <p class="mt-1 text-xs text-slate-500">Part des notices validées et poids des fichiers</p>
 
@@ -180,7 +180,7 @@
                 </p>
             </section>
 
-            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
+            <section class="min-w-0 rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
                 <div class="flex items-start justify-between gap-3">
                     <div>
                         <h2 class="text-sm font-semibold text-slate-900">Mémoires les plus consultés</h2>

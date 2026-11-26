@@ -78,7 +78,7 @@
                 <x-input-label for="fichier" value="Fichier PDF" />
                 <input id="fichier" name="fichier" type="file" accept="application/pdf,.pdf" required
                        class="mt-1.5 block w-full rounded-xl border border-slate-300 bg-white text-sm text-slate-700 file:mr-4 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200">
-                <p class="mt-1.5 text-xs text-slate-500">PDF uniquement, 50 Mo maximum.</p>
+                <p class="mt-1.5 text-xs text-slate-500">PDF uniquement, 40 Mo maximum.</p>
                 <x-input-error :messages="$errors->get('fichier')" class="mt-2" />
             </div>
 

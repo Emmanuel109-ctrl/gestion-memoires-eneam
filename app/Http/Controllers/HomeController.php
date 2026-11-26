@@ -40,6 +40,7 @@ class HomeController extends Controller
             'recents' => $recents,
             'nbMemoires' => (clone $base)->count(),
             'nbFilieres' => Filiere::count(),
+            'nbFilieresCouvertes' => (clone $base)->distinct()->count('filiere_id'),
             'nbAnnees' => (clone $base)->distinct()->count('annee_id'),
             'nbAuteurs' => $auteurs,
             'filieres' => Filiere::orderBy('nom')->get(),

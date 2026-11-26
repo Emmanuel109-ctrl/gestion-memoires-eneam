@@ -22,7 +22,7 @@
             <div class="rounded-xl bg-white px-4 py-3 shadow-soft ring-1 ring-slate-200/70">
                 <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Communauté</p>
                 <p class="mt-1 text-sm font-semibold text-slate-800">
-                    {{ $nbEtudiants }} étudiant(s) actif(s)
+                    {{ $nbEtudiants }} {{ $nbEtudiants > 1 ? 'étudiants actifs' : 'étudiant actif' }}
                 </p>
                 <p class="mt-0.5 text-[11px] text-slate-500">Autorisés à déposer cette année.</p>
             </div>
@@ -46,7 +46,7 @@
             <div class="rounded-xl bg-white px-4 py-3 shadow-soft ring-1 ring-slate-200/70">
                 <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Activité</p>
                 <p class="mt-1 text-sm font-semibold text-slate-800">
-                    {{ $decisionsSemaine }} décision(s)
+                    {{ $decisionsSemaine }} {{ $decisionsSemaine > 1 ? 'décisions' : 'décision' }}
                 </p>
                 <p class="mt-0.5 text-[11px] text-slate-500">Validations et rejets sur 7 jours.</p>
             </div>
