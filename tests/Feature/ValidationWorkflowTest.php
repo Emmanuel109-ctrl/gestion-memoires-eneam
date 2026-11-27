@@ -71,6 +71,60 @@ class ValidationWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_each_decision_is_preserved_and_admin_can_review_the_history(): void
+    {
+        $bibliothecaire = User::factory()->bibliothecaire()->create(['name' => 'Biblio ENEAM']);
+        $admin = User::factory()->admin()->create();
+        $memoire = $this->createMemoire();
+
+        $this->actingAs($bibliothecaire)
+            ->patch(route('validations.update', $memoire), [
+                'statut' => 'a_corriger',
+                'motif' => 'Ajouter la page de garde.',
+            ])
+            ->assertRedirect(route('validations.index'));
+
+        $memoire->update(['statut' => 'soumis']);
+
+        $this->actingAs($bibliothecaire)
+            ->patch(route('validations.update', $memoire), [
+                'statut' => 'valide',
+            ])
+            ->assertRedirect(route('validations.index'));
+
+        $this->assertSame(2, Validation::where('memoire_id', $memoire->id)->count());
+
+        $this->actingAs($admin)
+            ->get(route('validations.historique'))
+            ->assertOk()
+            ->assertSee('Historique des décisions')
+            ->assertSee('Mémoire de test')
+            ->assertSee('Biblio ENEAM')
+            ->assertSee('Ajouter la page de garde.');
+
+        $this->actingAs($bibliothecaire)
+            ->get(route('validations.historique'))
+            ->assertForbidden();
+    }
+
+    public function test_admin_can_export_the_filtered_decision_history_as_safe_csv(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $memoire = $this->createMemoire();
+        Validation::create([
+            'memoire_id' => $memoire->id,
+            'statut' => 'a_corriger',
+            'motif' => '=1+1',
+            'date_decision' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('validations.historique.export', ['statut' => 'a_corriger']));
+
+        $response->assertDownload('historique-decisions-'.now()->format('Ymd').'.csv');
+        $this->assertStringContainsString("'=1+1", $response->streamedContent());
+    }
+
     public function test_students_cannot_access_the_validation_queue(): void
     {
         $student = User::factory()->create();

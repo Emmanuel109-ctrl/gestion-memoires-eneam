@@ -14,9 +14,12 @@ Application Laravel de gestion et de consultation des mémoires de l'École Nati
 - Middleware `role` pour protéger les routes métier.
 - Middleware `EnsureAccountIsActive` : un compte désactivé (`users.actif = false`) ne peut plus se connecter et ses sessions sont fermées.
 - Référentiel des **filières** et des **années académiques**.
-- **Vérification documentaire** : file d'attente, fiche de contrôle, cases de conformité, décision (`valide`, `a_corriger`, `rejete`) avec motif obligatoire.
+- **Vérification documentaire** : file d'attente, fiche de contrôle, cases de conformité et décisions (`valide`, `a_corriger`, `rejete`) avec motif obligatoire. Chaque décision est conservée dans un historique consultable par l'administration et l'étudiant concerné.
 - Cycle de vie d'un mémoire : `soumis` → `en_verification` → `valide` (+ `a_corriger`, `rejete`).
 - **Dépôt étudiant** : envoi de PDF privés, suivi de statut, retour des corrections et conservation des versions précédentes.
+- **Notifications internes** : alertes lors des nouveaux dépôts et des décisions de validation, avec suivi des notifications lues/non lues.
+- **Comptes du personnel** : création, activation et désactivation des comptes par l'administration.
+- **Suivi des décisions** : historique conservé à chaque passage en validation, consultable par l'administration et par l'étudiant pour ses propres dépôts, avec export CSV filtrable réservé à l'administration.
 - **Espaces de travail par rôle** : suggestions et historique côté étudiant, file priorisée côté bibliothèque, indicateurs d'usage et de qualité du fonds côté administration.
 - **Gestion des mémoires** : recherche par titre/auteur et filtre par statut pour le personnel autorisé.
 - **Import** de l'annuaire étudiant et des mémoires depuis des fichiers CSV locaux, avec copie des PDF en privé et génération des pages de garde.
@@ -112,7 +115,6 @@ php artisan test
 
 ## Évolutions restantes
 
-- Notifications à l'étudiant quand une décision de validation ou une demande de correction est enregistrée.
-- Lecteur PDF intégré, favoris et recherche avancée.
-- Gestion des comptes et des rôles du personnel par l'administration.
+- Exports consolidés CSV des mémoires et statistiques pour les bilans administratifs (l'historique des décisions est déjà exportable).
+- Notifications par e-mail (en complément des notifications internes), après configuration et validation du service SMTP.
 - Exploitation réelle : annuaire fourni par la scolarité, autorisation écrite pour les données des étudiants, sauvegardes et déploiement HTTPS.

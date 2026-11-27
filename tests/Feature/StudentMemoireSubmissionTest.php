@@ -116,6 +116,11 @@ class StudentMemoireSubmissionTest extends TestCase
             'memoire_id' => $memoire->id,
             'numero_version' => 2,
         ]);
+        $this->actingAs($student)
+            ->get(route('memoires.miennes'))
+            ->assertOk()
+            ->assertSee('Historique des décisions')
+            ->assertSee('Ajouter la page de garde.');
         Storage::disk('local')->assertExists('memoires/old.pdf');
         Storage::disk('local')->assertExists($memoire->fichier_pdf);
     }

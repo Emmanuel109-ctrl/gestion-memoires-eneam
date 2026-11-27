@@ -55,6 +55,36 @@
             </div>
         </section>
 
+        @if ($memoire->validations->isNotEmpty())
+            <section class="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-200/70">
+                <h2 class="text-sm font-semibold text-slate-900">Historique des décisions</h2>
+                <p class="mt-1 text-xs text-slate-500">Chaque retour précédent est conservé pour assurer le suivi du dossier.</p>
+
+                <ol class="mt-4 space-y-4">
+                    @foreach ($memoire->validations as $decision)
+                        <li class="border-l-2 border-slate-200 pl-4">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <x-status-badge :statut="$decision->statut" />
+                                <span class="text-xs text-slate-500">
+                                    {{ $decision->date_decision?->translatedFormat('d/m/Y à H:i') ?? 'Date non renseignée' }}
+                                </span>
+                                <span class="text-xs text-slate-500">
+                                    · {{ $decision->validateur?->name ?? 'Compte supprimé' }}
+                                </span>
+                            </div>
+                            @if ($decision->motif)
+                                <p class="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-700">{{ $decision->motif }}</p>
+                            @endif
+                            <p class="mt-2 text-xs text-slate-500">
+                                Version papier : {{ $decision->conforme_version_papier ? 'conforme' : 'non confirmée' }}
+                                · Format PDF : {{ $decision->format_conforme ? 'conforme' : 'non confirmé' }}
+                            </p>
+                        </li>
+                    @endforeach
+                </ol>
+            </section>
+        @endif
+
         <form method="POST" action="{{ route('validations.update', $memoire) }}" class="space-y-6">
             @csrf
             @method('PATCH')

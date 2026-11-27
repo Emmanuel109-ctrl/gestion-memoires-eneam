@@ -55,6 +55,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/annees', [AnneeAcademiqueController::class, 'index'])->name('annees.index');
     Route::post('/annees', [AnneeAcademiqueController::class, 'store'])->name('annees.store');
     Route::patch('/annees/{annee}/active', [AnneeAcademiqueController::class, 'activate'])->name('annees.activate');
+    Route::get('/validations/historique/export', [ValidationController::class, 'exporterHistorique'])
+        ->name('validations.historique.export');
+    Route::get('/validations/historique', [ValidationController::class, 'historique'])
+        ->name('validations.historique');
 
     // Comptes du personnel : création, activation et désactivation.
     Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('users.index');

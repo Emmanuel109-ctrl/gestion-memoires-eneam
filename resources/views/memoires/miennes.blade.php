@@ -74,6 +74,29 @@
                             </p>
                         @endif
 
+                        @if ($memoire->validations->isNotEmpty())
+                            <details class="mt-4 rounded-xl border border-slate-200 bg-slate-50">
+                                <summary class="cursor-pointer px-4 py-3 text-xs font-semibold text-slate-700">
+                                    Historique des décisions ({{ $memoire->validations->count() }})
+                                </summary>
+                                <ol class="space-y-3 border-t border-slate-200 px-4 py-4">
+                                    @foreach ($memoire->validations->sortByDesc('date_decision') as $decision)
+                                        <li class="border-l-2 border-slate-300 pl-3">
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <x-status-badge :statut="$decision->statut" />
+                                                <span class="text-[11px] text-slate-500">
+                                                    {{ $decision->date_decision?->translatedFormat('d/m/Y à H:i') ?? 'Date non renseignée' }}
+                                                </span>
+                                            </div>
+                                            @if ($decision->motif)
+                                                <p class="mt-2 whitespace-pre-line text-xs leading-relaxed text-slate-600">{{ $decision->motif }}</p>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </details>
+                        @endif
+
                         <div class="mt-4 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-3 text-xs">
                             <a href="{{ route('catalogue.show', $memoire) }}"
                                class="font-semibold text-eneam-700 hover:text-eneam-900">

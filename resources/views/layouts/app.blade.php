@@ -144,6 +144,12 @@
                                     <x-nav-icon name="users" /> Comptes du personnel
                                 </a>
                             @endif
+                            @if (Route::has('validations.historique'))
+                                <a href="{{ route('validations.historique') }}"
+                                   class="flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium transition {{ request()->routeIs('validations.historique') ? 'bg-eneam-800 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                                    <x-nav-icon name="check" /> Historique des décisions
+                                </a>
+                            @endif
                         </div>
                     @endif
 
