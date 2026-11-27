@@ -28,6 +28,9 @@
                 'bibliothecaire' => 'bg-emerald-50 text-emerald-700 ring-emerald-200',
                 default => 'bg-sky-50 text-sky-700 ring-sky-200',
             };
+            $nonLues = Route::has('notifications.index')
+                ? $utilisateur->unreadNotifications()->count()
+                : 0;
         @endphp
 
         <div x-data="{ ouvert: false }" class="min-h-full">
@@ -75,6 +78,27 @@
                         </a>
                     </div>
 
+                    <div>
+                        <p class="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Ma sélection</p>
+                        @if (Route::has('favoris.index'))
+                            <a href="{{ route('favoris.index') }}"
+                               class="flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium transition {{ request()->routeIs('favoris.*') ? 'bg-eneam-800 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                                <x-nav-icon name="star" /> Mes favoris
+                            </a>
+                        @endif
+                        @if (Route::has('notifications.index'))
+                            <a href="{{ route('notifications.index') }}"
+                               class="flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium transition {{ request()->routeIs('notifications.*') ? 'bg-eneam-800 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                                <x-nav-icon name="bell" /> Notifications
+                                @if ($nonLues > 0)
+                                    <span class="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700">
+                                        {{ $nonLues > 9 ? '9+' : $nonLues }}
+                                    </span>
+                                @endif
+                            </a>
+                        @endif
+                    </div>
+
                     @if ($utilisateur->isAdmin())
                         <div>
                             <p class="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Référentiels</p>
@@ -117,7 +141,7 @@
                             @if (Route::has('users.index'))
                                 <a href="{{ route('users.index') }}"
                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium transition {{ request()->routeIs('users.*') ? 'bg-eneam-800 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
-                                    <x-nav-icon name="users" /> Utilisateurs
+                                    <x-nav-icon name="users" /> Comptes du personnel
                                 </a>
                             @endif
                         </div>
@@ -179,6 +203,19 @@
                     </div>
 
                     <div class="flex items-center gap-3">
+                        @if (Route::has('notifications.index'))
+                            <a href="{{ route('notifications.index') }}"
+                               class="relative rounded-xl p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                               title="Notifications">
+                                <span class="sr-only">Notifications</span>
+                                <x-nav-icon name="bell" class="h-5 w-5" />
+                                @if ($nonLues > 0)
+                                    <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-semibold text-white">
+                                        {{ $nonLues > 9 ? '9+' : $nonLues }}
+                                    </span>
+                                @endif
+                            </a>
+                        @endif
                         <span class="hidden items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200 sm:inline-flex">
                             <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                             {{ $utilisateur->libelleRole() }}

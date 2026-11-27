@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Memoire;
 use App\Models\Validation;
+use App\Notifications\DecisionMemoireNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,13 @@ class ValidationController extends Controller
 
             $memoire->update(['statut' => $validated['statut']]);
         });
+
+        $memoire->loadMissing('etudiant');
+        $memoire->etudiant?->notify(new DecisionMemoireNotification(
+            $memoire,
+            $validated['statut'],
+            $validated['motif'] ?? null
+        ));
 
         return redirect()
             ->route('validations.index')

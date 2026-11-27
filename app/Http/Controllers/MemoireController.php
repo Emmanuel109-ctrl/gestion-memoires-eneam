@@ -6,7 +6,9 @@ use App\Models\AnneeAcademique;
 use App\Models\Filiere;
 use App\Models\HistoriqueLecture;
 use App\Models\Memoire;
+use App\Models\User;
 use App\Models\VersionMemoire;
+use App\Notifications\NouveauDepotNotification;
 use App\Services\CouvertureService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -123,6 +125,7 @@ class MemoireController extends Controller
         });
 
         $this->genererCouverture($memoire, $couvertures);
+        $this->notifierPersonnel($memoire);
 
         return redirect()
             ->route('memoires.miennes')
@@ -177,6 +180,7 @@ class MemoireController extends Controller
         });
 
         $this->genererCouverture($memoire, $couvertures);
+        $this->notifierPersonnel($memoire);
 
         return redirect()
             ->route('memoires.miennes')
@@ -189,6 +193,8 @@ class MemoireController extends Controller
             'q' => ['nullable', 'string', 'max:100'],
             'filiere' => ['nullable', 'integer', 'exists:filieres,id'],
             'annee' => ['nullable', 'integer', 'exists:annees_academiques,id'],
+            'type_diplome' => ['nullable', 'string', 'max:50'],
+            'tri' => ['nullable', Rule::in(['recents', 'anciens', 'titre', 'auteur', 'consultes'])],
         ]);
 
         $requete = Memoire::query()
@@ -215,8 +221,29 @@ class MemoireController extends Controller
             $requete->where('annee_id', $filtres['annee']);
         }
 
+        if (! empty($filtres['type_diplome'])) {
+            $requete->where('type_diplome', $filtres['type_diplome']);
+        }
+
+        $tri = $filtres['tri'] ?? 'recents';
+
+        $requete = match ($tri) {
+            'anciens' => $requete->orderBy('date_depot'),
+            'titre' => $requete->orderBy('titre'),
+            'auteur' => $requete->orderBy('auteur_nom'),
+            'consultes' => $requete->orderByDesc('vues')->orderByDesc('date_depot'),
+            default => $requete->orderByDesc('date_depot'),
+        };
+
+        $typesDiplome = Memoire::query()
+            ->visiblesPour($request->user())
+            ->where('statut', 'valide')
+            ->whereNotNull('type_diplome')
+            ->distinct()
+            ->orderBy('type_diplome')
+            ->pluck('type_diplome');
+
         $memoires = $requete
-            ->orderByDesc('date_depot')
             ->paginate(12)
             ->withQueryString();
 
@@ -224,8 +251,10 @@ class MemoireController extends Controller
             'memoires' => $memoires,
             'filieres' => Filiere::orderBy('nom')->get(),
             'annees' => AnneeAcademique::orderByDesc('date_debut')->get(),
+            'typesDiplome' => $typesDiplome,
             'filtres' => $filtres,
             'recherche' => $recherche ?? '',
+            'tri' => $tri,
         ]);
     }
 
@@ -241,6 +270,8 @@ class MemoireController extends Controller
             'memoire' => $memoire,
             'peutLire' => $utilisateur !== null && $utilisateur->can('read', $memoire),
             'peutTelecharger' => $utilisateur !== null && $utilisateur->can('download', $memoire),
+            'estFavori' => $utilisateur !== null
+                && $utilisateur->favoris()->whereKey($memoire->id)->exists(),
         ]);
     }
 
@@ -252,6 +283,22 @@ class MemoireController extends Controller
         $this->authorize('view', $memoire);
 
         return $couvertures->reponse($memoire);
+    }
+
+    /**
+     * Lecteur PDF intégré : la visionneuse occupe l'écran, le PDF reste
+     * servi par la route privée `catalogue.lire`.
+     */
+    public function lecteur(Memoire $memoire): View
+    {
+        $this->authorize('read', $memoire);
+
+        $memoire->load(['filiere', 'annee']);
+
+        return view('catalogue.lecteur', [
+            'memoire' => $memoire,
+            'peutTelecharger' => request()->user()?->can('download', $memoire) ?? false,
+        ]);
     }
 
     public function lire(Memoire $memoire): BinaryFileResponse
@@ -299,6 +346,18 @@ class MemoireController extends Controller
         } catch (\Throwable) {
             //
         }
+    }
+
+    /**
+     * Prévient les agents actifs qu'un nouveau dépôt attend une vérification.
+     */
+    private function notifierPersonnel(Memoire $memoire): void
+    {
+        User::query()
+            ->where('actif', true)
+            ->whereIn('role', ['admin', 'bibliothecaire'])
+            ->get()
+            ->each(fn (User $utilisateur) => $utilisateur->notify(new NouveauDepotNotification($memoire)));
     }
 
     private function chemin(Memoire $memoire): string

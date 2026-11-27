@@ -6,7 +6,7 @@
                 <div>
                     <h1 class="text-3xl font-semibold tracking-tight text-slate-900">Mémoires de soutenance</h1>
                     <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
-                        Parcourez les travaux de fin d’études et recherchez par titre, auteur, filière ou année.
+                        Parcourez les travaux de fin d'études et recherchez par titre, auteur, filière ou année.
                     </p>
                 </div>
                 <p class="rounded-full bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
@@ -14,8 +14,9 @@
                 </p>
             </div>
 
-            <form method="GET" action="{{ route('catalogue.index') }}" class="mt-7 grid gap-3 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70 lg:grid-cols-[1fr_220px_180px_auto]">
-                <div class="relative">
+            <form method="GET" action="{{ route('catalogue.index') }}"
+                  class="mt-7 grid gap-3 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70 md:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.9fr)_auto]">
+                <div class="relative md:col-span-2 lg:col-span-1">
                     <label for="q" class="sr-only">Recherche</label>
                     <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" />
@@ -49,11 +50,34 @@
                     </select>
                 </div>
 
-                <div class="flex gap-2">
+                <div>
+                    <label for="type_diplome" class="sr-only">Type de diplôme</label>
+                    <select id="type_diplome" name="type_diplome" class="w-full rounded-xl border-slate-300 bg-white py-2.5 text-sm shadow-sm focus:border-eneam-600 focus:ring-eneam-600">
+                        <option value="">Tous les diplômes</option>
+                        @foreach ($typesDiplome as $type)
+                            <option value="{{ $type }}" @selected(($filtres['type_diplome'] ?? '') === $type)>
+                                {{ $type }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="tri" class="sr-only">Trier par</label>
+                    <select id="tri" name="tri" class="w-full rounded-xl border-slate-300 bg-white py-2.5 text-sm shadow-sm focus:border-eneam-600 focus:ring-eneam-600">
+                        <option value="recents" @selected($tri === 'recents')>Plus récents</option>
+                        <option value="anciens" @selected($tri === 'anciens')>Plus anciens</option>
+                        <option value="titre" @selected($tri === 'titre')>Titre (A–Z)</option>
+                        <option value="auteur" @selected($tri === 'auteur')>Auteur (A–Z)</option>
+                        <option value="consultes" @selected($tri === 'consultes')>Les plus consultés</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-2 md:col-span-2 lg:col-span-1">
                     <button type="submit" class="inline-flex flex-1 items-center justify-center rounded-xl bg-eneam-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-eneam-900">
                         Filtrer
                     </button>
-                    @if ($recherche !== '' || ! empty($filtres['filiere']) || ! empty($filtres['annee']))
+                    @if ($recherche !== '' || ! empty($filtres['filiere']) || ! empty($filtres['annee']) || ! empty($filtres['type_diplome']) || ! empty($filtres['tri']))
                         <a href="{{ route('catalogue.index') }}"
                            class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
                            title="Réinitialiser les filtres">
